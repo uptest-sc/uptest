@@ -8,10 +8,19 @@ description = "substrate rUntime uPgrade TESTing suit"
 readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+
+members = [
+	"libuptest"
+]
 
 [dependencies]
+<<<<<<< HEAD
 clap = { version = "4.0.15", features=["derive"]}
 
 [build-dependencies]
 clap_mangen = "0.2.2"
 clap = { version = "4.0.15", features=["derive"]}
+=======
+libuptest = { path = "libuptest/", version = "0.1.0"}
+>>>>>>> bd4876f674d2491fc302c61eac7678ffe981aac8
