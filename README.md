@@ -1,6 +1,7 @@
 ## uptest 
 
-Status: idea phase
+Status: Polkadot Treasury discussion phase: https://polkadot.polkassembly.io/post/1372    
+
 
 #### substrate runtime *UP*grade *TEST*ing suit
 
