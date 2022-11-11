@@ -11,3 +11,4 @@ https://crates.io/crates/uptest
 ### Check out future planned features here:   
 https://github.com/users/uptest-sc/projects/1/views/1   
 
+See future [usage_future.md](usage_future.md) for functionality details
