@@ -1,6 +1,6 @@
-## uptest 
+## Uptest 
 
-Status: Polkadot Treasury discussion phase: https://polkadot.polkassembly.io/post/1372    
+Status: Polkadot Treasury Proposal is up for discussion: https://polkadot.polkassembly.io/treasury/186      
 
 
 #### substrate runtime *UP*grade *TEST*ing suit
