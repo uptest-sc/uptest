@@ -14,6 +14,7 @@ name, optional, description
 --verbose(short -v), optional, enable verbose output        
 --account-key, optional, use a custom key for submitting transactions  
 --function-update-check, detect changes is public pallet functions
+--watch-upgrade, optional, subscribe to a chain and display the block with the runtime upgrade    
 --git, optional, clone a git repo and generate template tests files for all pallets in construct_runtime   
 --skip-gen-pallet, optional, do not generate pallet tests files for these. Separated by commas
 --pallet-version, optional, specify a specific pallet version to check if it changed during the runtime upgrade                          
@@ -148,8 +149,22 @@ Note:
 Check individual pallets by specifying the --pallet-name flag.
 
 
+# Subscribe to new runtime upgrades    
+ When using Uptest, uptest subscribes to a chain and checks each blocks for events telling the chain that an runtime upgrade has been pushed. If you want to connect to a chain and manually push the upgrade. You can use uptest to subscribe to a chain, check every new block for indicators of a runtime upgrade and display the block containing the upgrade.
+ ```
+$ uptest --ws ws://127.0.0.1:1337 --watch-upgrade
+[debug] Probing Chain X for a runtime upgrade...
+[debug] Runtime upgrade found in block #110 
+[debug] #110 Block info:
+[debug] Block Event: X
+[debug] Block Event: Y
+[debug] Block Event: Z
+ ```
+
+
 # Write test with libuptest macro   
 
+Uptest let's you simply import two macro's
 
 ## example pallet tests
 ```rust 
