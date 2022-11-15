@@ -19,7 +19,8 @@ name, optional, description
 --pallet-version, optional, specify a specific pallet version to check if it changed during the runtime upgrade                          
 --pallet-prefix, optional, specify a specific prefix to check if it changed during the runtime upgrade, for example: "py/trsry"
 --pallet-name, optional, specify the pallet you want to interact to 
---pallet-info, optional, query a live chain for details for a specific pallet
+--pallet-info, optional, query a live chain for details for a specific pallet   
+--pallet-storage-diff, optional, display changes made to a pallets storage
 --balance-diff, optional, Display accounts with update account balance    
 --connect-at-block, optional, specify what block you want to use when interacting with the chain, if not set Uptest will connect at the latest finalized block            
 --migration-search, optional, Search for migration code in Pallet. 
@@ -122,6 +123,18 @@ println!("Storage map TEST has changed");
 
 
 ```
+
+## Query for pallet storage changes made after a runtime upgrade   
+```
+$ uptest --ws  ws://127.0.0.1:1337  -w runtime.wasm  --pallet-storage-diff --pallet-name fluff 
+[debug - preupgrade] Found Pallet "fluff" with the following storagemaps: 
+Astorage(Address, u64)
+Bstorage(Address, Address, u32)
+Cstorage(Address, Address, Address)
+[debug] Pushing runtime upgrade  
+[debug] Storage "Bstorage" changed from "Bstorage(Address, Address, u32)" to "Bstorage(Address, u32)" 
+```
+
 
 ## Check for changes in pallet functions after a runtime upgrade    
 
