@@ -1,3 +1,6 @@
+# Uptest Future Functionality    
+
+
 ### Command line flags     
 name, optional, description            
 --ws, optional, ws socket host to connect to             
@@ -16,7 +19,7 @@ name, optional, description
 --function-update-check, detect changes is public pallet functions
 --watch-upgrade, optional, subscribe to a chain and display the block with the runtime upgrade    
 --git, optional, clone a git repo and generate template tests files for all pallets in construct_runtime   
---skip-gen-pallet, optional, do not generate pallet tests files for these. Separated by commas
+--skip-gen-pallet, optional, do not generate pallet tests files for these. Separated by commas  
 --pallet-version, optional, specify a specific pallet version to check if it changed during the runtime upgrade                          
 --pallet-prefix, optional, specify a specific prefix to check if it changed during the runtime upgrade, for example: "py/trsry"
 --pallet-name, optional, specify the pallet you want to interact to 
@@ -248,8 +251,15 @@ $ uptest --ws ws://127.0.0.1:1337 -w runtime.wasm --balance-diff
 
 
 # Implement Uptest in CI/[github actions](https://github.com/features/actions)/[gitlab CI](https://docs.gitlab.com/ee/ci/)     
+Uptest can be implemented in continous integration piplines/runners. Once your CI has compiled your substrate based node, you can use your wasm file(`cp target/release/wasm/runtime.wasm`) with uptest to test further functionality:    
+```bash
+$ wget uptest_binary // download uptest binary
+```
 
-
+spin up your node and give the ws address to uptest
+```bash 
+$ uptest --ws <WSHOST> -w target/release/wasm/runtime.wasm -t tests/uptest_check_pallets.rs  
+```
 
 
 # Uptest default execution flow:    
