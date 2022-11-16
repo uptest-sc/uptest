@@ -247,7 +247,12 @@ $ uptest --ws ws://127.0.0.1:1337 -w runtime.wasm --balance-diff
 ```
 
 
-Uptest default execution flow:   
+# Implement Uptest in CI/[github actions](https://github.com/features/actions)/[gitlab CI](https://docs.gitlab.com/ee/ci/)     
+
+
+
+
+# Uptest default execution flow:    
 ```
 <Connect to chain>
 <handles chains metadata>
