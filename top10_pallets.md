@@ -4,7 +4,7 @@
 
 | # Pallet Name         | Version     | Migrations |     
 |-----------------------|-------------|------------|   
-| Scheduler             | todo        | todo       |      
+| Scheduler             | v2 > v3        | Yes       |      
 | Balances              | todo        | todo       |    
 | Pallet Timestamp      |             | todo       |
 
@@ -12,6 +12,12 @@
 ## Pallet Name: 
 ### Example code:
 
+
+## Scheduler   
+
+
+Link to latest source code: 
+https://github.com/paritytech/substrate/blob/polkadot-v0.9.32/frame/scheduler/src/migration.rs  
 
 
 
