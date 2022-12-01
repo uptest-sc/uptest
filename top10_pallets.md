@@ -6,7 +6,8 @@
 |-----------------------|-------------|------------|   
 | Scheduler             | v2 > v3        | Yes       |      
 | Preimage              | 0 > 1        | Yes       |    
-| Pallet Timestamp      |             | todo       |
+| Pallet Timestamp      |             | todo       |   
+| Bag List              | | |   
 
 
 ## Pallet Name: 
