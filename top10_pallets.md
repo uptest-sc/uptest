@@ -17,10 +17,13 @@
 From version: v2   
 To version: v3   
 
-### Runtime upgrade migration code:
+#### Runtime upgrade migration code:  
 ```rust
 
 ```
+
+#### Storage changes
+
 
 
 Link to latest source code: 
@@ -34,10 +37,13 @@ https://github.com/paritytech/substrate/blob/polkadot-v0.9.32/frame/scheduler/sr
 From version: 0   
 To version: 1    
 
-### Runtime upgrade migration code:
+#### Runtime upgrade migration code:
 ```rust
 
 ```
+
+#### Storage changes
+
 
 
 Link to latest source code:
