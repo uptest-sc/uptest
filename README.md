@@ -1,9 +1,12 @@
 ## Uptest 
 
-Status: Polkadot Treasury Proposal is up for discussion: https://polkadot.polkassembly.io/treasury/186      
-
+Uptest aims to be an easy stand alone library for testing runtime upgrades before they are deployed.  
+Use libuptest to execute extrensic test before and after the upgrade is pushed
 
 #### substrate runtime *UP*grade *TEST*ing suit
+
+
+
 
 ### To be avaliable with cargo in the near future:  
 https://crates.io/crates/uptest
