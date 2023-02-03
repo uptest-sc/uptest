@@ -9,7 +9,8 @@ With uptest you can:
 *  Easily query changes mades to types, storagemaps etc..  
 *  Quickly get started with writing extrinsic tests with libuptest, let the library handle the execution logic before and after the runtime upgrade takes place   
 *  Utilize a standalone rust library to build out your integration tests
-*  Filter output based on pallet, to get a detailed change log
+*  Filter output based on pallet, to get a detailed change log    
+*  Schedule tests to execute before and/or after a runtime upgrade takes place, developers does not need to spend any extra time, tracking the state and execution flow of the runtime upgrade with polkadot.js typescript
 
 See future [usage_future.md](usage_future.md) for more details
 
