@@ -47,6 +47,7 @@ impl JsonrpseeClient {
 		block_on(Self::async_new(url))
 	}
 
+	/// connect to ws://127.0.0.1:9944  
 	pub fn with_default_url() -> Result<Self> {
 		Self::new("ws://127.0.0.1:9944")
 	}
@@ -56,15 +57,17 @@ impl JsonrpseeClient {
 		Self::new("wss://edgeware.jelliedowl.net:443")
 	}
 
+	/// connect to wss://polkadot-rpc-tn.dwellir.com:443
 	pub fn polkadot_default_url() -> Result<Self> {
 		Self::new("wss://polkadot-rpc-tn.dwellir.com:443")
 	}
 
+	/// connect to wss://kusama-rpc-tn.dwellir.com:443 
 	pub fn kusama_default_url() -> Result<Self> {
 		Self::new("wss://kusama-rpc-tn.dwellir.com:443")
 	}
 
-
+	/// connect to wss://ws.mof.sora.org:443  
 	pub fn sora_default_url() -> Result<Self> {
 		Self::new("wss://ws.mof.sora.org:443")
 	}
