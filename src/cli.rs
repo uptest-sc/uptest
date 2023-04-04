@@ -5,10 +5,10 @@ use clap::{arg, Command};
 pub fn gen_cli() -> Command {
     Command::new("uptest")
     .about("substrate runtime UPgrade TESTing suit")
-    .version("0.0.1") // read from Cargo.toml
+    .version(env!("CARGO_PKG_VERSION")) // read from Cargo.toml
     .subcommand_required(true)
     .arg_required_else_help(true)
-    .author("uptest-sc, @flipchan")
+    .author(env!("CARGO_PKG_AUTHORS"))
     // ws subcommand
     //
     // select ws host

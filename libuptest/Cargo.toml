@@ -1,15 +1,20 @@
 [package]
 name = "libuptest"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
+authors = ["Filip Kalebo<info@rustsyndi.cat>"]
 license = "MIT"
 homepage = "https://github.com/uptest-sc/uptest/"
-description = "Core Liberary for UpTest"
+description = "Core Substrate runtime upgrade Library for UpTest"
 readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-jsonrpsee = { version = "0.15.1", features = ["async-client", "client-ws-transport", "http-client"] }
-#subxt = { version = "0.24.0"  }
-#tokio = { version = "1.16" }
+jsonrpsee = { version = "0.16.2",  features = ["server", "ws-client", "macros", "client-ws-transport"]}
+jsonrpsee-core = "0.16.2"
+hex = { version = "0.4.3", features = ["alloc"]}
+anyhow = "1.0.69"
+serde_json = { version = "1" }
+futures = "0.3.26"
+serde = { version = "1.0.154", features = ["derive"], default-features = false }
