@@ -27,7 +27,7 @@ https://crates.io/crates/uptest
 https://github.com/users/uptest-sc/projects/1/views/1   
 
 
-### Examples    
+### Examples   
 
 #### Get metadata version:   
 ```rust
@@ -35,12 +35,21 @@ use libuptest::jsonrpseeclient::JsonrpseeClient;
 use libuptest::ws_mod::get_metadata_version;
 
 println!("Connecting to Edgeware");
-let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url().unwrap();
+let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url().unwrap();//.unwrap();//.unwrap();
 let edg_version: u8 = get_metadata_version(dial_edg).await?;
    
 println!("Connected to chain: {:?} and got metadata version: {:?}", "Edgeware", edg_version);
-```   
+```
 `cargo run -p uptest-examples --example metadata_version`   
+
+
+### Default connection endpoints:    
+The rpcclient comes with 5 different "default" chain endpoints:     
+*  with_default_url -> ws://127.0.0.1:9944   
+*  edgeware_default_url -> wss://edgeware.jelliedowl.net:443    
+*  polkadot_default_url -> wss://polkadot-rpc-tn.dwellir.com:443   
+*  kusama_default_url -> wss://kusama-rpc-tn.dwellir.com:443   
+*  sora_default_url -> wss://ws.mof.sora.org:443   
 
 
 
