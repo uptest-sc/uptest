@@ -1,6 +1,6 @@
 [package]
 name = "uptest"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 homepage = "https://github.com/uptest-sc/uptest/"
@@ -9,18 +9,16 @@ readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-
 members = [
-	"libuptest"
+	"libuptest",
+	"examples"
 ]
 
 [dependencies]
-<<<<<<< HEAD
-clap = { version = "4.0.15", features=["derive"]}
+clap = { version = "4.1.4", features=["derive"]}
+libuptest = { path = "libuptest/", version = "0.1.1"}
+
 
 [build-dependencies]
-clap_mangen = "0.2.2"
-clap = { version = "4.0.15", features=["derive"]}
-=======
-libuptest = { path = "libuptest/", version = "0.1.0"}
->>>>>>> bd4876f674d2491fc302c61eac7678ffe981aac8
+clap_mangen = "0.2.7"
+clap = { version = "4.1.4", features=["derive"]}

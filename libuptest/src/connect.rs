@@ -1,7 +1,7 @@
 /// Connect to chain over ws
 
 use jsonrpsee::{
-    async_client::{ClientBuilder, Client},
+  //  async_client::{ClientBuilder, Client},
     client_transport::ws::{
         Uri,
         WsTransportClientBuilder,
@@ -17,7 +17,7 @@ use std::time::Duration;
 
 
 // ws client
-
+/* 
 pub async fn get_ws_client(url: &Uri) -> Result<Client, Error> {
     let (sender, receiver) = WsTransportClientBuilder::default()
     .build(url.to_string().parse::<Uri>().unwrap())
@@ -30,7 +30,6 @@ Ok(ClientBuilder::default()
     .build_with_tokio(sender, receiver))
 }
 
-
 /// Extra good to use functions
 
 
@@ -40,3 +39,4 @@ pub async fn fetch_metadata_ws(url: &Uri) -> Result<String, Error> {
 
     Ok(client.request("state_getMetadata", rpc_params![]).await?)
 }
+*/

@@ -1,0 +1,12 @@
+[package]
+name = "uptest-examples"
+authors = ["Rust Syndicate"]
+version = "0.1.1"
+description = "Examples for libuptest"
+license = "MIT"
+edition = "2021"
+
+[dependencies]
+libuptest = { path = "../libuptest", version = "0.1.1" }
+anyhow =  "1.0.70"
+tokio = { version = "1.27", features = ["full"] }

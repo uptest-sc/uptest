@@ -1,14 +1,7 @@
-## Uptest - Work In Progress
+## Uptest 
 
 Uptest aims to be an easy stand alone library for testing runtime upgrades before they are deployed.  
 Use libuptest to execute extrensic test before and after the upgrade is pushed
-   
-
-
-### Funded by:  
-![Polkadot Treasury](polkadot-treasury-logo.svg)   
-
-
 
 #### substrate runtime *UP*grade *TEST*ing suit
 
@@ -33,6 +26,10 @@ https://crates.io/crates/uptest
 ### Check out future planned features here:   
 https://github.com/users/uptest-sc/projects/1/views/1   
 
+
+### Examples   
+
+`cargo run -p uptest-examples --example metadata_version`   
 
 
 
