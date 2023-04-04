@@ -35,7 +35,7 @@ use libuptest::jsonrpseeclient::JsonrpseeClient;
 use libuptest::ws_mod::get_metadata_version;
 
 println!("Connecting to Edgeware");
-let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url().unwrap();//.unwrap();//.unwrap();
+let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url().unwrap();
 let edg_version: u8 = get_metadata_version(dial_edg).await?;
    
 println!("Connected to chain: {:?} and got metadata version: {:?}", "Edgeware", edg_version);
