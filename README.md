@@ -27,8 +27,19 @@ https://crates.io/crates/uptest
 https://github.com/users/uptest-sc/projects/1/views/1   
 
 
-### Examples   
+### Examples    
 
+#### Get metadata version:   
+```rust
+use libuptest::jsonrpseeclient::JsonrpseeClient;
+use libuptest::ws_mod::get_metadata_version;
+
+println!("Connecting to Edgeware");
+let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url().unwrap();//.unwrap();//.unwrap();
+let edg_version: u8 = get_metadata_version(dial_edg).await?;
+   
+println!("Connected to chain: {:?} and got metadata version: {:?}", "Edgeware", edg_version);
+```   
 `cargo run -p uptest-examples --example metadata_version`   
 
 
