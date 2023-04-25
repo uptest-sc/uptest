@@ -33,11 +33,11 @@ impl<Notification: DeserializeOwned> HandleSubscription<Notification>
 	for SubscriptionWrapper<Notification>
 {
 	fn next(&mut self) -> Option<Result<Notification>> {
-		block_on(self.inner.next()).map(|result| result.map_err(|e| Error::AsyncNextError))
+		block_on(self.inner.next()).map(|result| result.map_err(|_e| Error::AsyncNextError))
 	}
 
 	fn unsubscribe(self) -> Result<()> {
-		block_on(self.inner.unsubscribe()).map_err(|e| Error::Unsubscribefail)
+		block_on(self.inner.unsubscribe()).map_err(|_e| Error::Unsubscribefail)// todo solve better error handling here
 	}
 }
 
@@ -50,12 +50,11 @@ impl<Notification> From<Subscription<Notification>> for SubscriptionWrapper<Noti
 
 
 
-
-
 /// Trait to be implemented by the ws-client for sending rpc requests and extrinsic.
+#[maybe_async::maybe_async(?Send)]
 pub trait Request {
 	/// Sends a RPC request to the substrate node and returns the answer as string.
-	fn request<R: DeserializeOwned>(&self, method: &str, params: RpcParams) -> Result<R>;
+	async fn request<R: DeserializeOwned>(&self, method: &str, params: RpcParams) -> Result<R>;
 }
 
 /// Trait to be implemented by the ws-client for subscribing to the substrate node.

@@ -10,3 +10,7 @@ edition = "2021"
 libuptest = { path = "../libuptest", version = "0.1.1" }
 anyhow =  "1.0.70"
 tokio = { version = "1.27", features = ["full"] }
+jsonrpsee = { version = "0.16.2",  features = ["server", "ws-client", "macros", "client-ws-transport"]}
+jsonrpsee-core = "0.16.2"
+maybe-async = { version = "0.2.7" }
+async-trait = "0.1.68"

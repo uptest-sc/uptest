@@ -52,7 +52,7 @@ impl JsonrpseeClient {
 		Self::new("ws://127.0.0.1:9944")
 	}
 
-	// lets extend with some preconfigured chains
+	/// connect wss://edgeware.jelliedowl.net:443
 	pub fn edgeware_default_url() -> Result<Self> {
 		Self::new("wss://edgeware.jelliedowl.net:443")
 	}
@@ -77,12 +77,12 @@ impl JsonrpseeClient {
 		Ok(1u32)
 	}
 
-	async fn async_new(url: &str) -> Result<Self> {
-		let uri: Uri = url.parse().map_err(|e| Error::InvalidUrl(url.to_string()))?;
+	async fn async_new(url: &str) -> Result<Self> { // todo change errors
+		let uri: Uri = url.parse().map_err(|_e| Error::ConnectionClosed)?; //no need to map the error if its generic
 		let (tx, rx) = WsTransportClientBuilder::default()
 			.build(uri)
 			.await
-			.map_err(|e| Error::ConnectionHandshakefailed)?;
+			.map_err(|_e| Error::ConnectionClosed)?;
 		let client = ClientBuilder::default()
 			.max_notifs_per_subscription(4096)
 			.build_with_tokio(tx, rx);
@@ -90,13 +90,48 @@ impl JsonrpseeClient {
 	}
 }
 
+
+
+
+
+
+#[maybe_async::async_impl(?Send)]
 impl Request for JsonrpseeClient {
-	fn request<R: DeserializeOwned>(&self, method: &str, params: RpcParams) -> Result<R> {
+	async fn request<R: DeserializeOwned>(&self, method: &str, params: RpcParams) -> Result<R> {
 		// Support async: #278
-		block_on(self.inner.request(method, RpcParamsWrapper(params)))
-			.map_err(|e| Error::ConnectionSubscriptionProblem)
+		let future = self.inner.request(method, RpcParamsWrapper(params)).await;
+		future.map_err(|_e| Error::ConnectionClosed)
 	}
 }
+#[maybe_async::sync_impl]
+impl Request for JsonrpseeClient {
+	fn request<R: DeserializeOwned>(&self, method: &str, params: RpcParams) -> Result<R> {
+		block_on(self.inner.request(method, RpcParamsWrapper(params)))
+			.map_err(|e| Error::ConnectionClosed)
+	}
+}
+
+
+
+/*
+
+#[maybe_async::async_impl(?Send)]
+impl Request for JsonrpseeClient {
+	async fn request<R: DeserializeOwned>(&self, method: &str, params: RpcParams) -> Result<R> {
+		// Support async: #278
+		let future = self.inner.request(method, RpcParamsWrapper(params)).await;
+		future.map_err(|e| Error::Client(Box::new(e)))
+	}
+}
+#[maybe_async::sync_impl]
+impl Request for JsonrpseeClient {
+	fn request<R: DeserializeOwned>(&self, method: &str, params: RpcParams) -> Result<R> {
+		block_on(self.inner.request(method, RpcParamsWrapper(params)))
+			.map_err(|e| Error::Client(Box::new(e)))
+	}
+}
+*/
+
 
 
 
@@ -111,9 +146,11 @@ impl Subscribe for JsonrpseeClient {
 	) -> Result<Self::Subscription<Notification>> {
 		block_on(self.inner.subscribe(sub, RpcParamsWrapper(params), unsub))
 			.map(|sub| sub.into())
-			.map_err(|e| Error::ConnectionSubscriptionProblem)
+			.map_err(|_e| Error::ConnectionSubscriptionProblem) // todo solve better error handling here
 	}
 }
+
+
 
 struct RpcParamsWrapper(crate::jsonrpseeclient::rpcstuff::RpcParams);
 
