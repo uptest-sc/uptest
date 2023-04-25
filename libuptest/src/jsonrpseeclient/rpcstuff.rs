@@ -6,6 +6,8 @@ use serde_json::{Result, Value};
 #[derive(Debug)]
 pub struct RpcParams(ParamsBuilder);
 
+pub type ExampleHash = [u8; 32];
+
 impl RpcParams {
 	/// Construct a new [`RpcParams`].
 	pub fn new() -> Self {

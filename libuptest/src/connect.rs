@@ -1,5 +1,6 @@
-/// Connect to chain over ws
+// Connect to chain over ws
 
+/*
 use jsonrpsee::{
   //  async_client::{ClientBuilder, Client},
     client_transport::ws::{
@@ -10,10 +11,12 @@ use jsonrpsee::{
         client::ClientT,
         Error,
     },
-    rpc_params,
+  //  rpc_params,
 };
 
-use std::time::Duration;
+*/
+
+//use std::time::Duration;
 
 
 // ws client

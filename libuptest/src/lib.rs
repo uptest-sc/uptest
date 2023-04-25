@@ -4,8 +4,10 @@ mod connect;
 pub mod ws_mod;
 mod error;
 pub mod jsonrpseeclient;
+pub mod types;
 
 
+/*
 pub struct PalletTest {
     pallet_name: String,
     pallet_method: String,
@@ -24,3 +26,5 @@ impl PalletTest {
 pub fn test() -> PalletTest  {
     PalletTest::new()
 }
+
+*/
