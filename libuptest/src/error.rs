@@ -1,5 +1,8 @@
+
 extern crate alloc;
-use alloc::{string::String};//boxed::Box, 
+
+
+use alloc::{string::String, boxed::Box};//boxed::Box, 
 
 //pub type Result<T> = core::result::Result<T, Error>;
 
@@ -21,6 +24,7 @@ pub enum Error {
 	AsyncNextError,
 	ConnectionSubscriptionProblem,
 	//Other(Box<dyn core::error::Error + Send + Sync + 'static>),
+	Client(Box<dyn core::error::Error + Send + Sync + 'static>),
 //	Client(Box<dyn core::error::Error + Send + Sync + 'static>),
 }
 

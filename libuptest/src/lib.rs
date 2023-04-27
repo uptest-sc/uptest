@@ -1,3 +1,6 @@
+#![feature(error_in_core)]
+
+
 mod chains;
 //mod edgeware;
 mod connect;
