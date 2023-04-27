@@ -1,3 +1,6 @@
+# Uptest is a polkadot treasury funded library that is currently in development     
+# DO NOT USE IN PRODUCTION YET   
+
 ## Uptest 
 
 Uptest aims to be an easy stand alone library for testing runtime upgrades before they are deployed.  

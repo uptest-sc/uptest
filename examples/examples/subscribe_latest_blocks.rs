@@ -1,30 +1,31 @@
+// subscribe to latest blocks, this is only in dev stage, on the way to moving it a better impl
 
-//use libuptest::jsonrpseeclient::rpcstuff::ExampleHash;
-use libuptest::jsonrpseeclient::JsonrpseeClient;
-//use libuptest::ws_mod::{get_latest_finalized_head, get_metadata_version};
-//use libuptest::jsonrpseeclient::subscription::Request;
-use libuptest::types::H256;
-//use libuptest::jsonrpseeclient::rpcstuff::RpcParams;
-//use jsonrpsee::ws_client::{WsClientBuilder};
-//use libuptest::ws_mod::WsClient;
-//use jsonrpsee::rpc_params;
-//use jsonrpsee_core::client::ClientT;
-//use jsonrpsee_core::client::Client;
 
-use libuptest::ws_mod::{get_latest_finalized_head};
+use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper};
+use libuptest::jsonrpseeclient::subscription::Subscribe;
+use libuptest::types::Header;
+use libuptest::jsonrpseeclient::subscription::HandleSubscription;
+
 
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-  //  let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url().unwrap();//.unwrap();//.unwrap();
-  //  let local_connection: JsonrpseeClient = JsonrpseeClient::with_default_url().unwrap();
- 
-    println!("ping");
 
     let client = JsonrpseeClient::edgeware_default_url().unwrap();
 
-    let finalized_block_hash: H256 = get_latest_finalized_head(client).await.unwrap();
-    println!("The latest finalized head is: {:?}", finalized_block_hash);
+  // todo: macro this
+  println!("Subscribing");
+  let mut subscrib: SubscriptionWrapper<Header> = client.subscribe::<Header>("chain_subscribeFinalizedHeads", RpcParams::new(), "chain_unsubscribeFinalizedHeads").unwrap();
+
+
+  for _ in 0..3 {
+    let nextone = subscrib.next();
+    println!("Latest finalized block: {:?}", nextone.unwrap().unwrap().number);
+  }
+
+
+  println!("unsubscribing");
+  let _ = subscrib.unsubscribe();
     Ok(())
 }
 

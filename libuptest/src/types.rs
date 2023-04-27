@@ -10,3 +10,8 @@ construct_fixed_hash! {
 }
 
 
+// used for subscribing to finalized head
+#[derive(Debug, Deserialize)]
+pub struct Header {
+    pub number: String,
+}

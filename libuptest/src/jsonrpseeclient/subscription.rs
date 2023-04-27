@@ -28,12 +28,12 @@ pub struct SubscriptionWrapper<Notification> {
 	inner: Subscription<Notification>,
 }
 
-// Support async: #278 (careful with no_std compatibility).
+
 impl<Notification: DeserializeOwned> HandleSubscription<Notification>
 	for SubscriptionWrapper<Notification>
 {
 	fn next(&mut self) -> Option<Result<Notification>> {
-		block_on(self.inner.next()).map(|result| result.map_err(|_e| Error::AsyncNextError))
+		block_on(self.inner.next()).map(|result| result.map_err(|e| Error::Client(Box::new(e))))
 	}
 
 	fn unsubscribe(self) -> Result<()> {
