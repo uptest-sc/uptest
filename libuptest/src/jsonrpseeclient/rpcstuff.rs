@@ -138,4 +138,21 @@ impl ParamsBuilder {
 }
 
 
+// this function was written by parity
+#[macro_export]
+macro_rules! rpc_params {
+	($($param:expr),*) => {
+		{
+
+			let mut params = RpcParams::new();
+			$(
+				if let Err(err) = params.insert($param) {
+					panic!("Parameter `{}` cannot be serialized: {:?}", stringify!($param), err);
+				}
+			)*
+			params
+		}
+	};
+}
+
 
