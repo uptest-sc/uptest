@@ -1,11 +1,13 @@
 pub use jsonrpsee::ws_client::{WsClientBuilder, WsClient};
 //use crate::error;
 //use crate::jsonrpseeclient::rpcstuff::*;
+use crate::rpc_params;
+use std::str::FromStr;
 use crate::jsonrpseeclient::rpcstuff::RpcParams;
 use crate::jsonrpseeclient::JsonrpseeClient;
 use crate::jsonrpseeclient::subscription::Request;
-use crate::types::H256;
-use std::str::FromStr;
+use crate::types::{H256, PreBlock};
+
 
 pub struct Wsclientwrapper();
 
@@ -54,11 +56,22 @@ pub async fn get_latest_finalized_head(client: JsonrpseeClient) -> anyhow::Resul
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_latest_finalized_head(client: JsonrpseeClient) -> anyhow::Result<H256, crate::error::Error> {
     let hex_data: String = client.request("chain_getFinalizedHead", RpcParams::new()).await?;
-    let finb: H256 = H256::from_str(&hex_data.as_str()).unwrap();
+    let finb: H256 = H256::from_str(&hex_data.as_str())?;
     Ok(finb) 
 }
 
 
+
+
+#[maybe_async::maybe_async(?Send)]
+pub async fn get_block_events(blockhash: H256, client: JsonrpseeClient) -> anyhow::Result<PreBlock, crate::error::Error> {
+    let string_hash: String = format!("{:?}", blockhash);
+ //   let query: Vec<String> = client.request("chain_getBlock",  rpc_params!["0x11dc73c97be314034507df6ceb80a3f4e15aa0d04f2a7f148e076e68e5341f96"]).await?; //rpc_params![].into()
+   
+    let qq: PreBlock = client.request("chain_getBlock",  rpc_params![string_hash]).await?; //rpc_params![].into()
+    //let fluff: Vec<String> = vec!["fluff".to_string()];
+    Ok(qq)
+}
 
 /*
 /// get block nr and system block events
