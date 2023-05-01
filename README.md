@@ -43,7 +43,13 @@ let edg_version: u8 = get_metadata_version(dial_edg).await?;
    
 println!("Connected to chain: {:?} and got metadata version: {:?}", "Edgeware", edg_version);
 ```
-`cargo run -p uptest-examples --example metadata_version`   
+
+
+```shell
+$ cargo run -p uptest-examples --example metadata_version  
+$ cargo run -p uptest-examples --example block_events   
+$ cargo run -p uptest-examples --example subscribe_latest_blocks   
+```   
 
 
 ### Default connection endpoints:    
