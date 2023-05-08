@@ -11,6 +11,7 @@ Use libuptest to execute extrensic test before and after the upgrade is pushed
 With uptest you can: 
 *  Easily query changes mades to types, storagemaps etc..  
 *  Quickly get started with writing extrinsic tests with libuptest, let the library handle the execution logic before and after the runtime upgrade takes place   
+*  More lightweight standalone version, rust code is not reliant on the main substrate repo   
 *  Utilize a standalone rust library to build out your integration tests
 *  Filter output based on pallet, to get a detailed change log    
 *  Schedule tests to execute before and/or after a runtime upgrade takes place, developers does not need to spend any extra time, tracking the state and execution flow of the runtime upgrade with polkadot.js typescript
@@ -43,13 +44,7 @@ let edg_version: u8 = get_metadata_version(dial_edg).await?;
    
 println!("Connected to chain: {:?} and got metadata version: {:?}", "Edgeware", edg_version);
 ```
-
-
-```shell
-$ cargo run -p uptest-examples --example metadata_version  
-$ cargo run -p uptest-examples --example block_events   
-$ cargo run -p uptest-examples --example subscribe_latest_blocks   
-```   
+`cargo run -p uptest-examples --example metadata_version`   
 
 
 ### Default connection endpoints:    

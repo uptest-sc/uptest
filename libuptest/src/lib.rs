@@ -8,7 +8,7 @@ pub mod ws_mod;
 mod error;
 pub mod jsonrpseeclient;
 pub mod types;
-
+pub mod codec;
 
 /*
 pub struct PalletTest {
