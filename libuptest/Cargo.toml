@@ -21,3 +21,11 @@ serde = { version = "1.0.154", features = ["derive"], default-features = false }
 fixed-hash = "0.8"
 maybe-async = { version = "0.2.7" }
 async-trait = "0.1.68"
+
+
+[features]
+metadatadecode = ["desub-current"]
+
+[dependencies.desub-current]
+version = "0.1.0"
+optional = true

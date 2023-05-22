@@ -14,10 +14,16 @@ members = [
 	"examples"
 ]
 
+[features]
+metadatadecode = ["desub-common"]
+
 [dependencies]
 clap = { version = "4.1.4", features=["derive"]}
 libuptest = { path = "libuptest/", version = "0.1.1"}
 
+[dependencies.desub-common]
+version = "0.1.0"
+optional = true
 
 [build-dependencies]
 clap_mangen = "0.2.7"
