@@ -1,7 +1,7 @@
-
 extern crate alloc;
 
 
+use serde::{Serialize, Deserialize};
 use alloc::{string::String, boxed::Box};//boxed::Box, 
 
 //pub type Result<T> = core::result::Result<T, Error>;
@@ -14,7 +14,8 @@ pub enum Error {
 	RecvError(String),
 	Io(String),
 	Stderror(String),
-
+	/// error getting block events
+	ErrorEvent, 
 	HexError(hex::FromHexError),
 	FixedHashHexError(fixed_hash::rustc_hex::FromHexError),
 	MaxConnectionAttemptsExceeded,
@@ -27,6 +28,13 @@ pub enum Error {
 	AsyncNextError,
 	ConnectionSubscriptionProblem,
 	Client(Box<dyn core::error::Error + Send + Sync + 'static>),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ErrorEvent {
+	/// Reason of the error.
+	pub error: String,
 }
 
 

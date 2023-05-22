@@ -8,7 +8,10 @@ pub mod ws_mod;
 mod error;
 pub mod jsonrpseeclient;
 pub mod types;
+pub mod codec;
 
+#[cfg(feature = "metadatadecode")]
+pub mod decode_extrinsic;
 
 /*
 pub struct PalletTest {

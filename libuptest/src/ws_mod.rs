@@ -36,6 +36,13 @@ pub async fn get_metadata_version(client: JsonrpseeClient) -> anyhow::Result<u8,
 }
 
 
+#[maybe_async::maybe_async(?Send)]
+pub async fn get_raw_metadata(client: JsonrpseeClient) -> anyhow::Result<Vec<u8>, crate::error::Error> {
+    let hex_data: String = client.request("state_getMetadata", RpcParams::new()).await?;
+    let bytes: Vec<u8> = hex::decode(hex_data.trim_start_matches("0x"))?;
+    Ok(bytes)
+}
+
 /*
 pub async fn get_metadata_version(client: JsonrpseeClient) -> anyhow::Result<u8> {
     let hex_data: String = client.request("state_getMetadata", RpcParams::new()).unwrap(); // get metadata hex blob
