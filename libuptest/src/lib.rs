@@ -1,14 +1,13 @@
 #![feature(error_in_core)]
 
-
 mod chains;
 //mod edgeware;
+pub mod codec;
 mod connect;
-pub mod ws_mod;
 mod error;
 pub mod jsonrpseeclient;
 pub mod types;
-pub mod codec;
+pub mod ws_mod;
 
 #[cfg(feature = "metadatadecode")]
 pub mod decode_extrinsic;

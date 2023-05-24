@@ -1,8 +1,7 @@
-/// scale codec debug 
-
-use crate::types::H256;
 use crate::error::ErrorEvent;
-use serde::{Serialize, Deserialize};
+/// scale codec debug
+use crate::types::H256;
+use serde::{Deserialize, Serialize};
 //use crate::error::Error;
 /*
 pub fn decode_char(data: &[u8], indent: u32) -> anhow::Result<DecodedOut, Error> {
@@ -25,18 +24,18 @@ pub fn decode_char(data: &[u8], indent: u32) -> anhow::Result<DecodedOut, Error>
 */
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RuntimeVersionEvent {
-	/// The runtime version.
-	pub spec: u32,
+    /// The runtime version.
+    pub spec: u32,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]
 pub enum RuntimeEvent {
-	/// The runtime version of this block.
-	Valid(RuntimeVersionEvent),
-	/// The runtime could not be obtained due to an error.
-	Invalid(ErrorEvent),
+    /// The runtime version of this block.
+    Valid(RuntimeVersionEvent),
+    /// The runtime could not be obtained due to an error.
+    Invalid(ErrorEvent),
 }
 
 /*

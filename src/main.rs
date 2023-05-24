@@ -1,6 +1,5 @@
 // Uptest --chain X --wshost ws://host:port --pallet-test scheduler --sudo "seed goes here"
 
-
 //use crate::libuptest;
 
 use clap::ArgMatches;
@@ -10,6 +9,6 @@ mod cli;
 
 fn main() {
     println!("uptest start");
-    let matches: ArgMatches  = cli::gen_cli().get_matches();
+    let matches: ArgMatches = cli::gen_cli().get_matches();
     println!("Matches: {:?}", matches.subcommand_name())
 }
