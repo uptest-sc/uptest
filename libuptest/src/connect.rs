@@ -18,9 +18,8 @@ use jsonrpsee::{
 
 //use std::time::Duration;
 
-
 // ws client
-/* 
+/*
 pub async fn get_ws_client(url: &Uri) -> Result<Client, Error> {
     let (sender, receiver) = WsTransportClientBuilder::default()
     .build(url.to_string().parse::<Uri>().unwrap())

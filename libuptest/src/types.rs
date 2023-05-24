@@ -1,6 +1,5 @@
 use fixed_hash::construct_fixed_hash;
-use serde::{Serialize, Deserialize};
-
+use serde::{Deserialize, Serialize};
 
 construct_fixed_hash! {
     /// My 256 bit hash type.
@@ -15,16 +14,14 @@ impl H256 {
     }
 }
 
-
 /// todo add the cargo expand
-
 
 #[derive(Debug, Deserialize)]
 pub struct Header {
     pub number: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct event_summary {
     pub pallet_name: String,
     pub pallet_method: String,
@@ -34,19 +31,18 @@ pub struct event_summary {
 #[derive(Debug, Deserialize)]
 pub struct Block<Header, Extrinsic: Serialize> {
     pub header: Header,
-    pub extrinsics: Extrinsic,//Vec<String>    
+    pub extrinsics: Extrinsic, //Vec<String>
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct justifications(Vec<u8>);
 
-// what we get if 
+// what we get if
 #[derive(Debug, Deserialize)]
-pub struct PreBlock{
+pub struct PreBlock {
     pub block: generic_block,
-    
-    pub justifications: Option<justifications>,//Justification can be null so lets put this in an option
-}
 
+    pub justifications: Option<justifications>, //Justification can be null so lets put this in an option
+}
 
 pub type generic_block = Block<Header, Vec<String>>;

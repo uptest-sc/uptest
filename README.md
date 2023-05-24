@@ -61,4 +61,5 @@ The rpcclient comes with 5 different "default" chain endpoints:
 https://github.com/apopiak/substrate-migrations   
 https://substrate-developer-hub.github.io/docs/en/knowledgebase/runtime/upgrades   
 https://docs.substrate.io/reference/how-to-guides/parachains/runtime-upgrade/   
-https://github.com/paritytech/substrate/issues?q=label%3AE1-runtimemigration%20   
+https://github.com/paritytech/substrate/issues?q=label%3AE1-runtimemigration%20     
+https://wiki.polkadot.network/docs/learn-runtime-upgrades   
