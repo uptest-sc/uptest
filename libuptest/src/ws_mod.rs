@@ -43,6 +43,26 @@ pub async fn get_raw_metadata(client: JsonrpseeClient) -> anyhow::Result<Vec<u8>
     Ok(bytes)
 }
 
+/// Query chain.getBlockHash to get the block hash
+#[maybe_async::maybe_async(?Send)]
+pub async fn blocknumber_to_blockhash(client: JsonrpseeClient, block_nr: String) -> anyhow::Result<H256, crate::error::Error> {
+    let raw_data: String = client.request("chain_getBlockHash", rpc_params![block_nr]).await?;
+    let hashen: H256 = H256::from_str(&raw_data.as_str())?;
+    Ok(hashen)
+}
+
+/// change to self.client
+
+/// Query chain.getBlock to get the block hash
+#[maybe_async::maybe_async(?Send)]
+pub async fn blockhash_to_block(client: JsonrpseeClient, block_hash: H256) -> anyhow::Result<H256, crate::error::Error> {
+    let raw_data: String = client.request("chain_getBlock", rpc_params![block_hash.to_string()]).await?;
+    let hashen: H256 = H256::from_str(&raw_data.as_str())?;
+    Ok(hashen)
+}
+
+
+
 /*
 pub async fn get_metadata_version(client: JsonrpseeClient) -> anyhow::Result<u8> {
     let hex_data: String = client.request("state_getMetadata", RpcParams::new()).unwrap(); // get metadata hex blob

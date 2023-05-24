@@ -8,6 +8,13 @@ construct_fixed_hash! {
     pub struct H256(32);
 }
 
+impl H256 {
+    fn to_string(&self) -> String {
+        let stringen = format!("{:?}", self);
+        stringen
+    }
+}
+
 
 /// todo add the cargo expand
 
@@ -15,6 +22,12 @@ construct_fixed_hash! {
 #[derive(Debug, Deserialize)]
 pub struct Header {
     pub number: String,
+}
+
+#[derive(Debug)]
+pub struct event_summary {
+    pub pallet_name: String,
+    pub pallet_method: String,
 }
 
 /// generic substrate sp-runtime block
