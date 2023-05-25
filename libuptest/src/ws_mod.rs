@@ -9,9 +9,8 @@ use crate::types::{PreBlock, H256};
 use std::str::FromStr;
 
 #[cfg(feature = "metadatadecode")]
-use crate::decode_extrinsic::{decodec_to_event_summary, decode_extrinsic_hex_string};
-use crate::types::event_summary;
-
+use crate::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_summary};
+use crate::types::{event_summary, RuntimeVersion};
 
 pub struct Wsclientwrapper();
 
@@ -130,26 +129,24 @@ pub async fn get_decoded_extrinsics_from_blockhash(
     metadatablob: Vec<u8>,
     client: JsonrpseeClient,
 ) -> anyhow::Result<Vec<event_summary>, crate::error::Error> {
- let preblock: PreBlock = get_block_events(blockhash, client).await.unwrap();
- let extrinsics: Vec<String> = preblock.block.extrinsics;
- let decodedevent_list: Vec<event_summary> = extrinsics
-    .clone()
-    .iter()
-    .map(|n| decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadatablob)))
-    .collect();
+    let preblock: PreBlock = get_block_events(blockhash, client).await.unwrap();
+    let extrinsics: Vec<String> = preblock.block.extrinsics;
+    let decodedevent_list: Vec<event_summary> = extrinsics
+        .clone()
+        .iter()
+        .map(|n| decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadatablob)))
+        .collect();
 
     Ok(decodedevent_list)
-
 }
-  
 
-
-/*
-/// get block nr and system block events
-
-/// rpc chain.getBlock(hash)
-
-/// system number
-
-///  chain.getBlockHash
-*/
+// get runtime version, state.getRuntimeVersion, different on different chains RuntimeVersion
+#[maybe_async::maybe_async(?Send)]
+pub async fn get_runtime_version(
+    client: JsonrpseeClient,
+) -> anyhow::Result<RuntimeVersion, crate::error::Error> {
+    let runtimeversion: RuntimeVersion = client
+        .request("state_getRuntimeVersion", RpcParams::new())
+        .await?;
+    Ok(runtimeversion)
+}
