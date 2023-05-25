@@ -1,7 +1,10 @@
 /// Detect what pallet methods was called, check if the chain has triggered a special function such as
 use libuptest::jsonrpseeclient::JsonrpseeClient;
 use libuptest::types::{event_summary, H256};
-use libuptest::ws_mod::{get_latest_finalized_head, get_raw_metadata, get_decoded_extrinsics_from_blockhash};
+use libuptest::ws_mod::{
+    get_decoded_extrinsics_from_blockhash, get_latest_finalized_head, get_raw_metadata,
+    get_runtime_version,
+};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -16,7 +19,10 @@ async fn main() -> anyhow::Result<()> {
     let blockhash: H256 = get_latest_finalized_head(client.clone()).await.unwrap();
     println!("Got block hash: {blockhash:?}");
     println!("Gathering extrinsics inside block");
-    let decodedevent_list: Vec<event_summary> = get_decoded_extrinsics_from_blockhash(blockhash, metadatablob, client.clone()).await.unwrap();
+    let decodedevent_list: Vec<event_summary> =
+        get_decoded_extrinsics_from_blockhash(blockhash, metadatablob, client.clone())
+            .await
+            .unwrap();
     println!("List created");
     let contains_runtime_upgrade: bool = decodedevent_list.contains(&runtime_upgrade_event);
 
@@ -24,6 +30,8 @@ async fn main() -> anyhow::Result<()> {
         true => println!("Contains runtime upgrade!"),
         _ => println!("does not contain runtime upgrade"),
     }
-
+    println!("Getting current runtime version");
+    let runtimeversion = get_runtime_version(client).await.unwrap();
+    println!("Current runtime version: {:?}", runtimeversion);
     Ok(())
 }

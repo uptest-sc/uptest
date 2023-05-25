@@ -14,7 +14,8 @@ With uptest you can:
 *  More lightweight standalone version, rust code is not reliant on the main substrate repo   
 *  Utilize a standalone rust library to build out your integration tests
 *  Filter output based on pallet, to get a detailed change log    
-*  Schedule tests to execute before and/or after a runtime upgrade takes place, developers does not need to spend any extra time, tracking the state and execution flow of the runtime upgrade with polkadot.js typescript
+*  Schedule tests to execute before and/or after a runtime upgrade takes place, developers does not need to spend any extra time, tracking the state and execution flow of the runtime upgrade with polkadot.js typescript  
+*  no kitchensink-runtime needed  
 
 See future [usage_future.md](usage_future.md) for more details
 
