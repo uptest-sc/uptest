@@ -3019,8 +3019,8 @@ version = "0.1.1"
 dependencies = [
  "clap",
  "clap_mangen",
- "desub-common",
  "libuptest",
+ "tokio",
 ]
 
 [[package]]
