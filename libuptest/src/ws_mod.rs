@@ -10,7 +10,10 @@ use std::str::FromStr;
 
 #[cfg(feature = "metadatadecode")]
 use crate::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_summary};
-use crate::types::{event_summary, RuntimeVersion};
+use crate::jsonrpseeclient::subscription::HandleSubscription;
+use crate::jsonrpseeclient::subscription::Subscribe;
+use crate::jsonrpseeclient::SubscriptionWrapper;
+use crate::types::{event_summary, Header, RuntimeVersion};
 
 pub struct Wsclientwrapper();
 
@@ -41,6 +44,8 @@ pub async fn get_metadata_version(
     Ok(bytes[4])
 }
 
+
+/// get the chain's metadata and return it as a Vec<u8>
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_raw_metadata(
     client: JsonrpseeClient,
@@ -96,6 +101,8 @@ pub async fn get_latest_finalized_head(client: JsonrpseeClient) -> anyhow::Resul
 
 */
 
+
+/// get the latest finalized block
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_latest_finalized_head(
     client: JsonrpseeClient,
@@ -107,6 +114,8 @@ pub async fn get_latest_finalized_head(
     Ok(finb)
 }
 
+
+/// get block events in block
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_block_events(
     blockhash: H256,
@@ -140,7 +149,7 @@ pub async fn get_decoded_extrinsics_from_blockhash(
     Ok(decodedevent_list)
 }
 
-// get runtime version, state.getRuntimeVersion, different on different chains RuntimeVersion
+/// get runtime version, state.getRuntimeVersion, different on different chains RuntimeVersion
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_runtime_version(
     client: JsonrpseeClient,
@@ -149,4 +158,58 @@ pub async fn get_runtime_version(
         .request("state_getRuntimeVersion", RpcParams::new())
         .await?;
     Ok(runtimeversion)
+}
+
+/// return the H256 hash of the block the user given event is triggered on
+/// client, block event to find, amount of blocks to check
+#[cfg(feature = "metadatadecode")]
+#[maybe_async::maybe_async(?Send)]
+pub async fn event_watch(
+    client: JsonrpseeClient,
+    event: event_summary,
+    block_limit: u32,
+) -> anyhow::Result<H256, crate::error::Error> {
+    let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
+    let blockhash: H256 =
+        H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31")
+            .unwrap();
+
+    let mut subscrib: SubscriptionWrapper<Header> = client
+        .subscribe::<Header>(
+            "chain_subscribeFinalizedHeads",
+            RpcParams::new(),
+            "chain_unsubscribeFinalizedHeads",
+        )
+        .unwrap();
+
+    for _ in 0..block_limit {
+        let tmp_client = client.clone(); // change me
+        let nextone = subscrib.next();
+        let block_nr = nextone.unwrap().unwrap().number;
+        let tmp_blockhash = blocknumber_to_blockhash(tmp_client.clone(), block_nr).await?;
+        let preblock = get_block_events(tmp_blockhash, tmp_client).await.unwrap();
+
+        let extrinsics = preblock.block.extrinsics;
+
+        let decodedevent_list: Vec<event_summary> = extrinsics
+            .clone()
+            .iter()
+            .map(|n| {
+                decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadatablob))
+            })
+            .collect();
+
+        match decodedevent_list.contains(&event) {
+            true => {
+                let _ = subscrib.unsubscribe(); // unsubscribe before killing it
+                return Ok(tmp_blockhash);
+            }
+            false => continue,
+        };
+    }
+
+    println!("unsubscribing");
+    let _ = subscrib.unsubscribe();
+
+    Ok(blockhash) // crate::error::Error::EventNotFound
 }

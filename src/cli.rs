@@ -10,7 +10,7 @@ pub fn gen_cli() -> Command {
         .author(env!("CARGO_PKG_AUTHORS"))
         // ws subcommand
         //
-        // select ws host
+        // select ws host, lets make this required flag so we can use this with all 
         .subcommand(
             Command::new("wshost")
                 .short_flag('w')
@@ -20,6 +20,7 @@ pub fn gen_cli() -> Command {
                 .arg(arg!(--sudokey "use sudo to upgrade chain"))
                 .arg_required_else_help(true), //require a ws host
         )
+/*  todo
         // select chain
         //
         // Only a few of its arguments are implemented below.
@@ -47,12 +48,24 @@ pub fn gen_cli() -> Command {
                 .about("generate tests for pallets")
                 .arg(arg!(<directory> "directory to use")),
         )
+ */
+        // subscribe to chain and find a certain event that got triggerd
         .subcommand(
             Command::new("pallet-method-sub")
                 .short_flag('s')
                 .long_flag("method_subscribe")
+                .help_template("Usage example: uptest -s Balance transfer \r\nuptest -s pallet_name pallet_method")
                 .about("Listen for new blocks and break when a certain pallet function is executed")
                 .arg(arg!(<pallet_name> "name of pallet"))
                 .arg(arg!(<pallet_method> "name of pallet function")),
+        )
+        // read local wasm file and submit runtime upgrade
+        .subcommand(
+            Command::new("submit-wasm")
+            .short_flag('u')
+            .long_flag("submit_upgrade")
+            .help_template("uptest -u /tmp/runtime_blob.wasm")
+            .about("Submit runtime upgrade wasm file")
+            .arg(arg!(<wasm_filepath> "file path of wasm file")),
         )
 }

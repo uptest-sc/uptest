@@ -1320,6 +1320,7 @@ dependencies = [
  "maybe-async",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -3019,6 +3020,7 @@ version = "0.1.1"
 dependencies = [
  "clap",
  "clap_mangen",
+ "hex",
  "libuptest",
  "tokio",
 ]

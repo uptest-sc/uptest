@@ -1,6 +1,8 @@
 // Uptest --chain X --wshost ws://host:port --pallet-test scheduler --sudo "seed goes here"
 
 use clap::ArgMatches;
+use libuptest::jsonrpseeclient::JsonrpseeClient;
+use std::ffi::OsStr;
 mod cli;
 mod helper;
 
@@ -23,6 +25,12 @@ async fn main() {
                 pallet_method.unwrap(),
             )
             .await;
+        }
+        Some("submit-wasm") => {
+            let sub_m = matches.subcommand_matches("submit-wasm").unwrap();
+            let file_path: &OsStr = sub_m.get_one::<&OsStr>("wasm_filepath").map(|s| s).unwrap();
+            let tmp_client = JsonrpseeClient::with_default_url().unwrap();
+            helper::submit_wasm_runtime_upgrade(tmp_client, &file_path).await;
         }
         _ => println!("invalid arguments"),
     }

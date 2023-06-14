@@ -19,6 +19,7 @@ members = [
 clap = { version = "4.1.4", features=["derive"]}
 libuptest = { path = "libuptest/", version = "0.1.1", features = ["metadatadecode"]}
 tokio = { version = "1.27", features = ["full"] }
+hex = { version = "0.4.3", features = ["alloc"]}
 
 
 [build-dependencies]
