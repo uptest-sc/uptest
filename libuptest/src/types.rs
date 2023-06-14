@@ -9,10 +9,12 @@ construct_fixed_hash! {
 }
 
 impl H256 {
+    /*
     fn to_string(&self) -> String {
         let stringen = format!("{:?}", self);
         stringen
     }
+    */
 }
 
 /// todo add the cargo expand

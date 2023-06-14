@@ -2,9 +2,11 @@ use libuptest::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_
 use libuptest::jsonrpseeclient::subscription::HandleSubscription;
 use libuptest::jsonrpseeclient::subscription::Subscribe;
 use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper};
+use libuptest::metadata::read_wasm_binary;
 use libuptest::types::Header;
 use libuptest::types::{event_summary, H256};
 use libuptest::ws_mod::{blocknumber_to_blockhash, get_block_events, get_raw_metadata};
+use std::path::Path;
 
 /// Subscribe and break on user defined event
 pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &str) -> bool {
@@ -56,5 +58,26 @@ pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &st
     }
 
     let _ = subscrib.unsubscribe();
+    true
+}
+
+/*
+ts implementation:
+  const txid = await api.tx.sudo
+    .sudoUncheckedWeight(
+      api.tx.system.setCodeWithoutChecks(`0x${buff.toString('hex')}`), 10000
+    )
+    .signAndSend(sudoac);
+
+*/
+
+pub async fn submit_wasm_runtime_upgrade(
+    client: JsonrpseeClient,
+    file_path: &std::ffi::OsStr,
+) -> bool {
+    let bloben: u8 = read_wasm_binary(Path::new(file_path)).await.unwrap(); // read in the wasm file, validate it?
+                                                                            // sign and submit the wasm file
+    let hex_blob = hex::encode([bloben]);
+
     true
 }

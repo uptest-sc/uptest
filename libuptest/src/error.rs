@@ -12,10 +12,15 @@ pub enum Error {
     InvalidUrl(String),
     RecvError(String),
     Io(String),
+    FileIOerror(std::io::Error),
     Stderror(String),
     /// error getting block events
     ErrorEvent,
+    /// Could not find event in the latest blocks
+    EventNotFound,
+    /// hex crate error
     HexError(hex::FromHexError),
+    /// H256 fast hash hex decoding error
     FixedHashHexError(fixed_hash::rustc_hex::FromHexError),
     MaxConnectionAttemptsExceeded,
     /// connection to endpoint closed
@@ -46,6 +51,12 @@ impl From<serde_json::error::Error> for Error {
 impl From<hex::FromHexError> for Error {
     fn from(value: hex::FromHexError) -> Self {
         Self::HexError(value)
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(value: std::io::Error) -> Self {
+        Self::FileIOerror(value)
     }
 }
 

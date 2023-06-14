@@ -22,10 +22,13 @@ fixed-hash = "0.8"
 maybe-async = { version = "0.2.7" }
 async-trait = "0.1.68"
 impl-serde = { version = "0.4.0", default-features = false }
+tokio = { version = "1.27", features = ["full"] }
 
 
 [features]
+all = ["metadatadecode"]
 metadatadecode = ["desub-current"]
+
 
 [dependencies.desub-current]
 version = "0.1.0"

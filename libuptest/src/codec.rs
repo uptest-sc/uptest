@@ -1,7 +1,7 @@
 use crate::error::ErrorEvent;
-/// scale codec debug
-use crate::types::H256;
+//use crate::types::H256;
 use serde::{Deserialize, Serialize};
+
 //use crate::error::Error;
 /*
 pub fn decode_char(data: &[u8], indent: u32) -> anhow::Result<DecodedOut, Error> {
