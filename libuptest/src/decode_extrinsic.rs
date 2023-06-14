@@ -8,7 +8,7 @@ use desub_current::{
 use crate::types::event_summary;
 
 #[cfg(feature = "metadatadecode")]
-fn to_bytes(hex_str: &str) -> Vec<u8> {
+pub fn to_bytes(hex_str: &str) -> Vec<u8> {
     let hex_str = hex_str
         .strip_prefix("0x")
         .expect("0x should prefix hex encoded bytes");
