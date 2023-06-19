@@ -5,10 +5,10 @@ use desub_current::{
     Metadata,
 };
 
-use crate::types::event_summary;
+use crate::types::{event_summary, pallet_storage_types};
 
 #[cfg(feature = "metadatadecode")]
-pub fn to_bytes(hex_str: &str) -> Vec<u8> {
+fn to_bytes(hex_str: &str) -> Vec<u8> {
     let hex_str = hex_str
         .strip_prefix("0x")
         .expect("0x should prefix hex encoded bytes");
@@ -33,4 +33,11 @@ pub fn decodec_to_event_summary<'a>(extrins: Extrinsic) -> event_summary {
     };
     //  let string_vec_events: Vec<event_summary> = vec![single_event];
     single_event
+}
+
+/// return a Vec of Pallets and the storage items associated with each pallets then use it for diffs
+#[cfg(feature="metadatadecode")]
+pub fn pallet_info() -> Vec<pallet_storage_types> {
+    
+    todo!("wip")
 }
