@@ -30,6 +30,22 @@ pub struct event_summary {
     pub pallet_method: String,
 }
 
+#[derive(Debug)]
+pub enum storage_types {
+    StorageValue,
+    StorageMap
+}
+
+// wip, parse the pallets storage types, storage values and storage maps
+#[derive(Debug)]
+pub struct pallet_storage_types {
+    pub pallet_prefix: String,
+    pub StorageType: storage_types,
+    pub storage_items: Vec<storage_types>,
+    pub storage_key: u8,
+}
+
+
 // Copied from sp_version (only available in std in the substrate version).
 // https://github.com/paritytech/substrate/blob/1b3ddae9dec6e7653b5d6ef0179df1af831f46f0/primitives/version/src/lib.rs#L392-L393
 mod apis_serialize {
