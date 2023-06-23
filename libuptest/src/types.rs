@@ -32,15 +32,19 @@ pub struct event_summary {
 
 #[derive(Debug)]
 pub enum storage_types {
+    /// Substrate StorageValue 
     StorageValue,
+    /// Substrate StorageMap
     StorageMap,
+    /// Unknown type
+    Unknown,
 }
 
 #[derive(Debug, Clone)]
 // storage value of pallet, could for example be StorageMap<>
 pub struct storage_value {
     name: String,
-    //     storagetype: ,// tricky..
+    storagetype: storage_types,// tricky..
     typeid: u32,
 }
 
