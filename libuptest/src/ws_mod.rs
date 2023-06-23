@@ -44,7 +44,6 @@ pub async fn get_metadata_version(
     Ok(bytes[4])
 }
 
-
 /// get the chain's metadata and return it as a Vec<u8>
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_raw_metadata(
@@ -101,7 +100,6 @@ pub async fn get_latest_finalized_head(client: JsonrpseeClient) -> anyhow::Resul
 
 */
 
-
 /// get the latest finalized block
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_latest_finalized_head(
@@ -113,7 +111,6 @@ pub async fn get_latest_finalized_head(
     let finb: H256 = H256::from_str(&hex_data.as_str())?;
     Ok(finb)
 }
-
 
 /// get block events in block
 #[maybe_async::maybe_async(?Send)]
