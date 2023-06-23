@@ -4,6 +4,7 @@ use desub_current::{
     decoder::{self, Extrinsic},
     Metadata,
 };
+use frame_metadata::v14::StorageEntryType;
 
 use crate::types::{event_summary, pallet_storage_types};
 
@@ -36,8 +37,7 @@ pub fn decodec_to_event_summary<'a>(extrins: Extrinsic) -> event_summary {
 }
 
 /// return a Vec of Pallets and the storage items associated with each pallets then use it for diffs
-#[cfg(feature="metadatadecode")]
+#[cfg(feature = "metadatadecode")]
 pub fn pallet_info() -> Vec<pallet_storage_types> {
-    
     todo!("wip")
 }

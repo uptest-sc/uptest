@@ -33,7 +33,15 @@ pub struct event_summary {
 #[derive(Debug)]
 pub enum storage_types {
     StorageValue,
-    StorageMap
+    StorageMap,
+}
+
+#[derive(Debug, Clone)]
+// storage value of pallet, could for example be StorageMap<>
+pub struct storage_value {
+    name: String,
+    //     storagetype: ,// tricky..
+    typeid: u32,
 }
 
 // wip, parse the pallets storage types, storage values and storage maps
@@ -42,9 +50,8 @@ pub struct pallet_storage_types {
     pub pallet_prefix: String,
     pub StorageType: storage_types,
     pub storage_items: Vec<storage_types>,
-    pub storage_key: u8,
+    pub type_id: u32, // type id of storage{Value/Map}
 }
-
 
 // Copied from sp_version (only available in std in the substrate version).
 // https://github.com/paritytech/substrate/blob/1b3ddae9dec6e7653b5d6ef0179df1af831f46f0/primitives/version/src/lib.rs#L392-L393
