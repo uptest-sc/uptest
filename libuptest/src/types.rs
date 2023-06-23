@@ -40,11 +40,14 @@ pub enum storage_types {
     Unknown,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 // storage value of pallet, could for example be StorageMap<>
 pub struct storage_value {
+    /// name of the storage value/map
     name: String,
+    /// storage type, is it a storagemap or storagevalue
     storagetype: storage_types,// tricky..
+    /// type id, the  id of the type defintion you can see in the decoded metadata json blob
     typeid: u32,
 }
 
