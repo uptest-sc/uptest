@@ -11,6 +11,8 @@ pub mod ws_mod;
 
 #[cfg(feature = "metadatadecode")]
 pub mod decode_extrinsic;
+#[cfg(feature = "metadatadecode")]
+pub mod pallet_storage_parse;
 
 /*
 pub struct PalletTest {
