@@ -1,12 +1,34 @@
 use libuptest::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_summary};
-use libuptest::jsonrpseeclient::subscription::HandleSubscription;
 use libuptest::jsonrpseeclient::subscription::Subscribe;
+use libuptest::jsonrpseeclient::subscription::{HandleSubscription, Request};
 use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper};
 use libuptest::metadata::read_wasm_binary;
+use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_info};
 use libuptest::types::Header;
 use libuptest::types::{event_summary, H256};
 use libuptest::ws_mod::{blocknumber_to_blockhash, get_block_events, get_raw_metadata};
 use std::path::Path;
+
+/// return all storagevalues and storagemaps for all pallets
+pub async fn get_all_pallets_storage(wshost: &str) -> Vec<storage_map_info> {
+    let client = JsonrpseeClient::new(wshost).unwrap();
+    // get the chain's metadata
+    let metadatablob = get_raw_metadata(client).await.unwrap();
+
+    let pallet_list: Vec<storage_map_info> =
+        parse_pallet_storage_types(metadatablob).await.unwrap();
+    pallet_list
+}
+
+/// return all storagevalues and storagemaps for one single pallets
+pub async fn get_single_pallet_storage(wshost: &str, pallet_name: &str) -> Vec<storage_map_info> {
+    let pallet_list: Vec<storage_map_info> = get_all_pallets_storage(wshost).await;
+    let new_list: Vec<storage_map_info> = pallet_list
+        .into_iter()
+        .filter(|pallet_entry: &storage_map_info| pallet_entry.pallet_name == pallet_name)
+        .collect(); // filter list based on pallet name
+    new_list
+}
 
 /// Subscribe and break on user defined event
 pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &str) -> bool {
@@ -78,6 +100,6 @@ pub async fn submit_wasm_runtime_upgrade(
     let bloben: u8 = read_wasm_binary(Path::new(file_path)).await.unwrap(); // read in the wasm file, validate it?
                                                                             // sign and submit the wasm file
     let hex_blob = hex::encode([bloben]);
-
+    //  let submitted = client.request(method, params)
     true
 }

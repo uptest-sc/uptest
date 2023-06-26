@@ -1,7 +1,7 @@
 // Uptest --chain X --wshost ws://host:port --pallet-test scheduler --sudo "seed goes here"
 
 use clap::ArgMatches;
-use libuptest::jsonrpseeclient::JsonrpseeClient;
+use libuptest::{jsonrpseeclient::JsonrpseeClient, pallet_storage_parse::storage_map_info};
 use std::ffi::OsStr;
 mod cli;
 mod helper;
@@ -25,6 +25,58 @@ async fn main() {
                 pallet_method.unwrap(),
             )
             .await;
+        }
+        Some("storage-changes") => {
+            let matched = matches.subcommand_matches("storage-changes").unwrap();
+            let ws_host = matched.get_one::<String>("ws_host").unwrap();
+            // Use the `ws_host` value in your client code
+            println!("ws_host: {}", ws_host);
+        }
+
+        Some("pallets-storage") => {
+            let sub_m = matches.subcommand_matches("pallets-storage").unwrap();
+            let ws_host: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
+
+            // some input validation
+            match &ws_host[0..5] == "ws://" {
+                true => {}
+                false => {
+                    panic!("ws host does not start with ws://, double check ws address");
+                }
+            }
+        
+            //            let wshost: &str = sub_m.get_one::<&str>("ws_host").map(|s| s).unwrap();
+            println!("Gathering information about all pallet's storage information");
+            let listan: Vec<storage_map_info> =
+                helper::get_all_pallets_storage(ws_host.as_str()).await;
+            for mypallet in listan.iter() {
+                println!("Pallet name: {:?}\r\n - Storage item name: {:?}\r\n - Storage type: {:?}\r\n - Storage type id key: {:?}\r\n - Pallet Raw type: {:?}", 
+                &mypallet.pallet_name, &mypallet.storage_item_name, &mypallet.storage_type, &mypallet.type_id, &mypallet.raw_type
+            );
+            }
+        }
+        Some("pallet-storage") => {
+            let sub_m = matches.subcommand_matches("pallet-storage").unwrap();
+            let ws_host: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
+            let pallet_name: String = sub_m.get_one::<String>("pallet_name").unwrap().to_owned();
+
+            println!("Gathering information about pallet: {pallet_name:?}");
+            let listan: Vec<storage_map_info> =
+                helper::get_single_pallet_storage(&ws_host, &pallet_name).await;
+            match listan.len() {
+                0 => {
+                    println!("Could not find any pallet by that name, check spelling");
+                }
+                _ => {
+                    println!("Jackpot!");
+                    for pallets in listan.iter() {
+                        println!("Storage item name: {:?} \r\nType id: {:?} \r\nStorage Type: {:?} \r\n Raw function type: {:?}",
+                        pallets.storage_item_name, pallets.type_id, pallets.storage_type, pallets.raw_type
+                    );
+                    }
+                }
+            }
+           
         }
         Some("submit-wasm") => {
             let sub_m = matches.subcommand_matches("submit-wasm").unwrap();

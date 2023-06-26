@@ -1,12 +1,9 @@
 /// return information about the storage maps and storage values for all enabled pallets
-/// 
-/// 
-
-
+///
+///
 use libuptest::jsonrpseeclient::JsonrpseeClient;
+use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_info};
 use libuptest::ws_mod::get_raw_metadata;
-use libuptest::pallet_storage_parse::{storage_map_info, parse_pallet_storage_types};
-
 
 #[tokio::main]
 async fn main() {
