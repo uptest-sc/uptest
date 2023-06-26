@@ -59,6 +59,33 @@ pub fn gen_cli() -> Command {
                 .arg(arg!(<pallet_name> "name of pallet"))
                 .arg(arg!(<pallet_method> "name of pallet function")),
         )
+        .subcommand(
+            Command::new("storage-changes")
+            .short_flag('c')
+            .long_flag("storage_changes")
+            .about("Displays the changes made to storage maps and storage values after a runtime upgrade, similar to pallets-storage(-p) but subscribes to chain")
+            .help_template("Usage example: uptest -c -w ws://127.0.0.1:9944")
+            .arg(arg!(<ws> "ws endpoint of the chain to connect")),
+        )
+        // todo filter by custom pallet
+        .subcommand(
+            Command::new("pallets-storage")
+            .short_flag('p')
+            .long_flag("pallets_storage")
+            .about("Displays all storage maps and storage values for all pallets")
+            .help_template("Usage example: uptest -p ws://127.0.0.1:9944")
+            .arg(arg!(<ws> "ws endpoint of the chain to connect")),
+        )
+        // Get all storage values and maps for a single pallet
+        .subcommand(
+            Command::new("pallet-storage")
+            .short_flag('d')
+            .long_flag("pallet_storage")
+            .about("Displays storage maps and storage values for a single pallet")
+            .help_template("Usage example: uptest -d ws://127.0.0.1:9944 pallet_name \r\n uptest -d ws://127.0.0.1:9944 TemplateModule")
+            .arg(arg!(<ws> "ws endpoint of the chain to connect"))
+            .arg(arg!(<pallet_name> "pallet name")),
+        )
         // read local wasm file and submit runtime upgrade
         .subcommand(
             Command::new("submit-wasm")

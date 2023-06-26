@@ -1,7 +1,6 @@
-/// parse the storage values and storage maps associated with all the pallets
-
-use desub_current::scale_info::TypeDefPrimitive;
 use crate::types::storage_types;
+/// parse the storage values and storage maps associated with all the pallets
+use desub_current::scale_info::TypeDefPrimitive;
 
 use desub_current::{
     scale_info::form::{Form, PortableForm},
@@ -80,7 +79,7 @@ pub async fn parse_pallet_storage_types(
     for item in storage_entries {
         //   println!("Pallet name: {:?}", &item.prefix());
         let current_pallet_name = item.prefix();
-        
+
         //println!("Storage entries:");
 
         // detect if type id's has changed
@@ -95,7 +94,7 @@ pub async fn parse_pallet_storage_types(
             //println!("Storage item name: {:?}", entry_to_scan.name);
             match storage_ent {
                 StorageEntryType::Plain(_) => {
-//                    println!("Storage value detected");
+                    //                    println!("Storage value detected");
                     pallet_info.storage_type = storage_types::StorageValue;
                 }
                 // we only need the type def right now, lets ignore the hashing type and key atm
@@ -106,26 +105,26 @@ pub async fn parse_pallet_storage_types(
                 } => {
                     let typid: u32 = value.id();
                     pallet_info.type_id = typid.clone();
-    //                println!("StorageMap detected with type id key: {:?}", typid);
+                    //                println!("StorageMap detected with type id key: {:?}", typid);
                     // make better
                     for co in og_types.iter() {
                         //    println!("detecting type");
                         //       pallet_info.por_type = co.clone();
                         if co.id() == typid {
                             pallet_info.raw_type = co.ty().type_def().clone();
-  //                          println!("Type detected: {:?}", co.ty().type_def());
+                            //                          println!("Type detected: {:?}", co.ty().type_def());
                         }
                     }
                     pallet_info.storage_type = storage_types::StorageMap;
                 }
                 _ => {
-    //                println!("Could not detect storage type");
+                    //                println!("Could not detect storage type");
                     pallet_info.storage_type = storage_types::Unknown;
                 }
             }
             pallet_list.push(pallet_info);
         }
-   //     println!("---------------------------------------\r\n");
+        //     println!("---------------------------------------\r\n");
     }
     // println!("bytes are: ");
     //println!("Amount of pallets:  {:?}", pallet_list.len());

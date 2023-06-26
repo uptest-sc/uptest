@@ -32,7 +32,7 @@ pub struct event_summary {
 
 #[derive(Debug)]
 pub enum storage_types {
-    /// Substrate StorageValue 
+    /// Substrate StorageValue
     StorageValue,
     /// Substrate StorageMap
     StorageMap,
