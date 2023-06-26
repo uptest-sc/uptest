@@ -6,10 +6,6 @@
 Uptest aims to be an easy stand alone library for testing runtime upgrades before they are deployed.  
 Use libuptest to execute extrensic test before and after the upgrade is pushed
 
-### WIP Documentation:   
-[https://uptest-sc.github.io/](https://uptest-sc.github.io/)   
-
-
 #### substrate runtime *UP*grade *TEST*ing suit
 
 With uptest you can: 
@@ -51,6 +47,11 @@ println!("Connected to chain: {:?} and got metadata version: {:?}", "Edgeware", 
 ```
 `cargo run -p uptest-examples --example metadata_version`   
 
+
+### Get all pallet's storagevalues and storage maps:   
+```shell
+cargo run -p uptest-examples --example get_pallet_storagemaps_storagevalues
+```
 
 ### Default connection endpoints:    
 The rpcclient comes with 5 different "default" chain endpoints:     

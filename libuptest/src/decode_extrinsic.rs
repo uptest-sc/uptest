@@ -4,7 +4,7 @@ use desub_current::{
     decoder::{self, Extrinsic},
     Metadata,
 };
-use frame_metadata::v14::StorageEntryType;
+//use frame_metadata::v14::StorageEntryType;
 
 use crate::types::{event_summary, pallet_storage_types};
 

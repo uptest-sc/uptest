@@ -36,18 +36,15 @@ pub enum storage_types {
     StorageValue,
     /// Substrate StorageMap
     StorageMap,
-    /// Unknown type
+    /// Unknown type, could not detect the right type
     Unknown,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 // storage value of pallet, could for example be StorageMap<>
 pub struct storage_value {
-    /// name of the storage value/map
     name: String,
-    /// storage type, is it a storagemap or storagevalue
-    storagetype: storage_types,// tricky..
-    /// type id, the  id of the type defintion you can see in the decoded metadata json blob
+    //     storagetype: ,// tricky..
     typeid: u32,
 }
 
