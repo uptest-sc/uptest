@@ -44,7 +44,7 @@ async fn main() {
                     panic!("ws host does not start with ws://, double check ws address");
                 }
             }
-        
+
             //            let wshost: &str = sub_m.get_one::<&str>("ws_host").map(|s| s).unwrap();
             println!("Gathering information about all pallet's storage information");
             let listan: Vec<storage_map_info> =
@@ -76,13 +76,34 @@ async fn main() {
                     }
                 }
             }
-           
+        }
+
+        Some("block-watch") => {
+            let sub_m = matches.subcommand_matches("block-watch").unwrap();
+            let wshost: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
+            let mut dalimit: u32 = 0;
+            if let Some(c) = sub_m.get_one::<String>("block_limit") {
+                let k:  u32 = c.parse::<u32>().unwrap();;
+                dalimit = k;
+                println!("Value for blocklimit: {c}");
+            }
+            
+            //let block_amount: &u32 = sub_m.get_one("blocklimit").unwrap(); 
+          //  let block_amount: u32 = sub_m.get_one::<u32>("blocklimit").unwrap().to_owned();
+           // let block_amount: u32 = sub_m.get_one::<u32>("block_limit").unwrap().to_owned();
+
+            let _runner = helper::event_summary_for_latest_blocks(&wshost, dalimit).await;
+            println!("all good");
         }
         Some("submit-wasm") => {
+
+            /*
             let sub_m = matches.subcommand_matches("submit-wasm").unwrap();
             let file_path: &OsStr = sub_m.get_one::<&OsStr>("wasm_filepath").map(|s| s).unwrap();
             let tmp_client = JsonrpseeClient::with_default_url().unwrap();
             helper::submit_wasm_runtime_upgrade(tmp_client, &file_path).await;
+            */
+            todo!("todo, impl signers");
         }
         _ => println!("invalid arguments"),
     }

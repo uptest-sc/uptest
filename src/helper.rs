@@ -30,6 +30,51 @@ pub async fn get_single_pallet_storage(wshost: &str, pallet_name: &str) -> Vec<s
     new_list
 }
 
+// display what pallet and functions where triggers in the X amount of latest finalized blocks
+pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) -> bool {
+    let client = JsonrpseeClient::new(wshost).unwrap(); // change me
+    let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
+    println!("Subscribing to latest finalized blocks");
+    let mut subscrib: SubscriptionWrapper<Header> = client
+        .clone()
+        .subscribe::<Header>(
+            "chain_subscribeFinalizedHeads",
+            RpcParams::new(),
+            "chain_unsubscribeFinalizedHeads",
+        )
+        .unwrap();
+
+    for _ in 0..block_amount {
+        let tmp_client = JsonrpseeClient::new(wshost).unwrap(); 
+        let nextone = subscrib.next();
+        let blocknr = nextone.unwrap().unwrap().number;
+        println!("Latest finalized block: {:?}", blocknr);
+        let blockhash: H256 = blocknumber_to_blockhash(tmp_client.clone(), blocknr.clone())
+            .await
+            .unwrap();
+        println!("Finalized block hash: {blockhash:?}");
+
+        let preblock = get_block_events(blockhash, tmp_client).await.unwrap();
+
+        let extrinsics = preblock.block.extrinsics;
+
+        let decodedevent_list: Vec<event_summary> = extrinsics
+            .clone()
+            .iter()
+            .map(|n| {
+                decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadatablob))
+            })
+            .collect();
+
+        for myevent in decodedevent_list {
+            println!("decoded event: {:?}", myevent);
+        }
+    }
+
+    let _ = subscrib.unsubscribe();
+    true//Ok(true)
+}
+
 /// Subscribe and break on user defined event
 pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &str) -> bool {
     println!("Subscribing to Chain X, Metadata Version Y");
