@@ -26,55 +26,45 @@ async fn main() -> anyhow::Result<()> {
         )
         .unwrap();
 
-    //  for _ in 0..3 {
-    let nextone = subscrib.next();
-    let blocknr = nextone.unwrap().unwrap().number;
-    println!("Latest finalized block: {:?}", blocknr);
-    let blockhash: H256 = blocknumber_to_blockhash(client.clone(), blocknr.clone())
-        .await
-        .unwrap();
-    println!("Got block hash: {blockhash:?}");
-    let _ = subscrib.unsubscribe();
+    for _ in 0..3 {
+        let tmp_client = JsonrpseeClient::polkadot_default_url().unwrap();
+        let nextone = subscrib.next();
+        let blocknr = nextone.unwrap().unwrap().number;
+        println!("Latest finalized block: {:?}", blocknr);
+        let blockhash: H256 = blocknumber_to_blockhash(tmp_client.clone(), blocknr.clone())
+            .await
+            .unwrap();
+        println!("Got block hash: {blockhash:?}");
 
-    //    let tmpblock: H256 = H256::from_str("0x17ee6d42553cf5161144ab95fecfe27c694e697f2d7e6f22271972cf476176b5").unwrap(); static polkadot block used for debugging
+        //    let tmpblock: H256 = H256::from_str("0x17ee6d42553cf5161144ab95fecfe27c694e697f2d7e6f22271972cf476176b5").unwrap(); static polkadot block used for debugging
 
-    //let tmpblock: H256 = H256::from_string("0x343f3f94ff17c79f2f4e77dcb5e894507b89dd575dbc2e36bde658ad653ead45"); //0x343f3f94ff17c79f2f4e77dcb5e894507b89dd575dbc2e36bde658ad653ead45
-    let preblock = get_block_events(blockhash, client).await.unwrap();
+        //let tmpblock: H256 = H256::from_string("0x343f3f94ff17c79f2f4e77dcb5e894507b89dd575dbc2e36bde658ad653ead45"); //0x343f3f94ff17c79f2f4e77dcb5e894507b89dd575dbc2e36bde658ad653ead45
+        let preblock = get_block_events(blockhash, tmp_client).await.unwrap();
 
-    let extrinsics = preblock.block.extrinsics;
+        let extrinsics = preblock.block.extrinsics;
 
-    let decodedevent_list: Vec<event_summary> = extrinsics
-        .clone()
-        .iter()
-        .map(|n| decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadatablob)))
-        .collect();
-    /*
-      for ext in extrinsics {
-      //    println!("Extracted extrinsic: {ext:?} from block: {blocknr:?}");
-          let decodedoutput = decode_extrinsic_hex_string(ext.as_str(), &metadatablob);
-          let summary: event_summary = decodec_to_event_summary(decodedoutput);
-          println!("Summary: {:?}", summary);
-          //println!("Decoded extrinsics as: {decodedoutput:?}");
-      }
-    */
-    println!("Looping throw decoded events:");
-    for myevent in decodedevent_list {
-        println!("decoded event: {:?}", myevent);
+        let decodedevent_list: Vec<event_summary> = extrinsics
+            .clone()
+            .iter()
+            .map(|n| {
+                decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadatablob))
+            })
+            .collect();
+        /*
+          for ext in extrinsics {
+          //    println!("Extracted extrinsic: {ext:?} from block: {blocknr:?}");
+              let decodedoutput = decode_extrinsic_hex_string(ext.as_str(), &metadatablob);
+              let summary: event_summary = decodec_to_event_summary(decodedoutput);
+              println!("Summary: {:?}", summary);
+              //println!("Decoded extrinsics as: {decodedoutput:?}");
+          }
+        */
+        println!("Looping throw decoded events:");
+        for myevent in decodedevent_list {
+            println!("decoded event: {:?}", myevent);
+        }
     }
 
-    /*
-        let raw_extrinsic = "0x280403000ba0ada8438801"; // time stamp extrinsic taken from random polkadot block
-        println!("Raw extrinsic value: {raw_extrinsic:?}");
-        println!("Downloading metadata");
-        let metadata: Vec<u8> = get_raw_metadata(JsonrpseeClient::polkadot_default_url().unwrap()).await.unwrap(); // yolo
-        println!("Metadata downloaded ok");
-    */
-
-    /*
-        let decoded_output = decode_extrinsic_hex_string(raw_extrinsic, &metadata);
-        let single_event: event_summary = event_summary { pallet_name:  decoded_output.call_data.pallet_name.to_string(), pallet_method: decoded_output.call_data.ty.name().to_string()};
-        let string_vec_events: Vec<event_summary> = vec![single_event];
-        println!("Decoded output as:  {:?} ", string_vec_events[0].pallet_method);
-    */
+    let _ = subscrib.unsubscribe();
     Ok(())
 }

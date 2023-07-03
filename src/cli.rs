@@ -11,6 +11,9 @@ pub fn gen_cli() -> Command {
         // ws subcommand
         //
         // select ws host, lets make this required flag so we can use this with all 
+
+/*  todo
+
         .subcommand(
             Command::new("wshost")
                 .short_flag('w')
@@ -20,7 +23,8 @@ pub fn gen_cli() -> Command {
                 .arg(arg!(--sudokey "use sudo to upgrade chain"))
                 .arg_required_else_help(true), //require a ws host
         )
-/*  todo
+
+
         // select chain
         //
         // Only a few of its arguments are implemented below.
@@ -86,6 +90,20 @@ pub fn gen_cli() -> Command {
             .arg(arg!(<ws> "ws endpoint of the chain to connect"))
             .arg(arg!(<pallet_name> "pallet name")),
         )
+        .subcommand(
+            Command::new("block-watch")
+            .short_flag('w')
+            .long_flag("block_watch")
+            .about("Subscribe to a chain and display the events triggered in the latest blocks")
+            .help_template("
+            Usage example: uptest -w wshost blockamount
+            \r\n Connect to polkadot and view the latest 40 blocks: uptest -d wss://polkadot-rpc-tn.dwellir.com:443 40 
+            \r\n Latest 50 blocks from the locally running substrate node: ./target/release/uptest -w ws://127.0.0.1:9944 50")
+            .arg(arg!(<ws> "ws endpoint of the chain to connect"))
+            .arg(arg!(<block_limit> "amount of blocks of latest blocks to subscribe to").required(true)),
+        )
+        
+        
         // read local wasm file and submit runtime upgrade
         .subcommand(
             Command::new("submit-wasm")
