@@ -3,11 +3,14 @@
 mod chains; // depricate me
 pub mod codec;
 mod connect;
-mod error;
+pub mod error;
 pub mod jsonrpseeclient;
 pub mod metadata;
 pub mod types;
 pub mod ws_mod;
+
+#[cfg(feature = "subxthelper")]
+pub mod subxt_helper;
 
 #[cfg(feature = "metadatadecode")]
 pub mod decode_extrinsic;

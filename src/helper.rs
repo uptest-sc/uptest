@@ -45,7 +45,7 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
         .unwrap();
 
     for _ in 0..block_amount {
-        let tmp_client = JsonrpseeClient::new(wshost).unwrap(); 
+        let tmp_client = JsonrpseeClient::new(wshost).unwrap();
         let nextone = subscrib.next();
         let blocknr = nextone.unwrap().unwrap().number;
         println!("Latest finalized block: {:?}", blocknr);
@@ -72,7 +72,7 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
     }
 
     let _ = subscrib.unsubscribe();
-    true//Ok(true)
+    true //Ok(true)
 }
 
 /// Subscribe and break on user defined event

@@ -10,7 +10,7 @@ use desub_current::{
 type TypeDef = desub_current::scale_info::TypeDef<PortableForm>;
 use frame_metadata::v14::StorageEntryType; // v14 only rn..
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct storage_map_info {
     pub pallet_name: String,
     pub storage_item_name: String, // name of storagemap

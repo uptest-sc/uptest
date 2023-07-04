@@ -159,6 +159,12 @@ pub async fn get_runtime_version(
 
 /// return the H256 hash of the block the user given event is triggered on
 /// client, block event to find, amount of blocks to check
+///     let custom_event: event_summary = event_summary {
+/// pallet_name: "Sudo".to_string(),
+/// pallet_method: "sudo_unchecked_weight".to_string(),
+///};
+///  let block_limit: u32 = 100u32;
+/// let search_n_find = event_watch(client, custom_event, block_limit).await
 #[cfg(feature = "metadatadecode")]
 #[maybe_async::maybe_async(?Send)]
 pub async fn event_watch(
