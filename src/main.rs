@@ -83,20 +83,19 @@ async fn main() {
             let wshost: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
             let mut dalimit: u32 = 0;
             if let Some(c) = sub_m.get_one::<String>("block_limit") {
-                let k:  u32 = c.parse::<u32>().unwrap();;
+                let k: u32 = c.parse::<u32>().unwrap();
                 dalimit = k;
                 println!("Value for blocklimit: {c}");
             }
-            
-            //let block_amount: &u32 = sub_m.get_one("blocklimit").unwrap(); 
-          //  let block_amount: u32 = sub_m.get_one::<u32>("blocklimit").unwrap().to_owned();
-           // let block_amount: u32 = sub_m.get_one::<u32>("block_limit").unwrap().to_owned();
+
+            //let block_amount: &u32 = sub_m.get_one("blocklimit").unwrap();
+            //  let block_amount: u32 = sub_m.get_one::<u32>("blocklimit").unwrap().to_owned();
+            // let block_amount: u32 = sub_m.get_one::<u32>("block_limit").unwrap().to_owned();
 
             let _runner = helper::event_summary_for_latest_blocks(&wshost, dalimit).await;
             println!("all good");
         }
         Some("submit-wasm") => {
-
             /*
             let sub_m = matches.subcommand_matches("submit-wasm").unwrap();
             let file_path: &OsStr = sub_m.get_one::<&OsStr>("wasm_filepath").map(|s| s).unwrap();

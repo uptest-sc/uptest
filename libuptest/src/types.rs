@@ -30,7 +30,7 @@ pub struct event_summary {
     pub pallet_method: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum storage_types {
     /// Substrate StorageValue
     StorageValue,

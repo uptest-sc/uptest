@@ -102,8 +102,6 @@ pub fn gen_cli() -> Command {
             .arg(arg!(<ws> "ws endpoint of the chain to connect"))
             .arg(arg!(<block_limit> "amount of blocks of latest blocks to subscribe to").required(true)),
         )
-        
-        
         // read local wasm file and submit runtime upgrade
         .subcommand(
             Command::new("submit-wasm")
