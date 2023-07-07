@@ -10,6 +10,8 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 */
 
 /// schedule a subxt transaction to happen before or after a user defined event is triggered
-use subxt;
+//use subxt;
 
-pub async fn send_during_event(beforetx: String, aftertx: String) -> bool {}
+pub async fn send_during_event(beforetx: String, aftertx: String) -> bool {
+    todo!("todo")
+}

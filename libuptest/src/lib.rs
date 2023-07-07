@@ -20,8 +20,8 @@ pub mod metadata;
 pub mod types;
 pub mod ws_mod;
 
-#[cfg(feature = "subxthelper")]
-pub mod subxt_helper;
+//#[cfg(feature = "subxthelper")]
+//pub mod subxt_helper;
 
 #[cfg(feature = "metadatadecode")]
 pub mod decode_extrinsic;
