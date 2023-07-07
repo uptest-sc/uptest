@@ -1,3 +1,14 @@
+/*
+Copyright © 2023 Rust Syndicate LLC <flipchan@rustsyndi.cat>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
 use fixed_hash::construct_fixed_hash;
 use jsonrpsee_core::Cow;
 use serde::{Deserialize, Serialize};
@@ -17,19 +28,24 @@ impl H256 {
     */
 }
 
-/// todo add the cargo expand
-
+/// Block Header containing the block nr
 #[derive(Debug, Deserialize)]
 pub struct Header {
     pub number: String,
 }
 
+/// Create a generic event in the form of:
+/// event_summary {
+/// pub pallet_name: "Sudo".to_string(),
+/// pub pallet_method: "secret_function".to_string(),
+/// }
 #[derive(Debug, PartialEq)]
 pub struct event_summary {
     pub pallet_name: String,
     pub pallet_method: String,
 }
 
+/// enum for defining what type of storage entry it is, is it a StorageValue, StorageMap or Unknown type
 #[derive(Debug, PartialEq)]
 pub enum storage_types {
     /// Substrate StorageValue
@@ -40,20 +56,23 @@ pub enum storage_types {
     Unknown,
 }
 
+/// storage value
 #[derive(Debug, Clone)]
-// storage value of pallet, could for example be StorageMap<>
 pub struct storage_value {
     name: String,
-    //     storagetype: ,// tricky..
     typeid: u32,
 }
 
 // wip, parse the pallets storage types, storage values and storage maps
 #[derive(Debug)]
 pub struct pallet_storage_types {
+    /// name of pallet
     pub pallet_prefix: String,
+    /// StorageMap|StorageValue or unknown
     pub StorageType: storage_types,
+    ///  Vec of storage types
     pub storage_items: Vec<storage_types>,
+    /// the type id of the storage item
     pub type_id: u32, // type id of storage{Value/Map}
 }
 
@@ -131,12 +150,14 @@ mod apis_serialize {
     }
 }
 
+/// [u8; 8]
 pub type ApiId = [u8; 8];
 
 /// A vector of pairs of `ApiId` and a `u32` for version.
 pub type ApisVec = Cow<'static, [(ApiId, u32)]>;
 
-// https://github.com/paritytech/substrate/blob/0cf64f8bd72d719818be2f109c0919c7c9325cd1/primitives/version/src/lib.rs#L161
+/// RuntimeVersion ported over from substrate main repo
+/// https://github.com/paritytech/substrate/blob/0cf64f8bd72d719818be2f109c0919c7c9325cd1/primitives/version/src/lib.rs#L161
 #[derive(Debug, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RuntimeVersion {
@@ -164,7 +185,7 @@ pub struct Block<Header, Extrinsic: Serialize> {
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct justifications(Vec<u8>);
 
-// what we get if
+// A generic PreBlock that contains a block and the justifications
 #[derive(Debug, Deserialize)]
 pub struct PreBlock {
     pub block: generic_block,
@@ -172,4 +193,5 @@ pub struct PreBlock {
     pub justifications: Option<justifications>, //Justification can be null so lets put this in an option
 }
 
+/// A generic block format
 pub type generic_block = Block<Header, Vec<String>>;
