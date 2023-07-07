@@ -1,3 +1,14 @@
+/*
+Copyright © 2023 Rust Syndicate LLC <flipchan@rustsyndi.cat>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
 #[cfg(feature = "metadatadecode")]
 // using desub from parity atm to decode extrinsics and manage the encodements
 use desub_current::{
@@ -8,6 +19,7 @@ use desub_current::{
 
 use crate::types::{event_summary, pallet_storage_types};
 
+/// take a string, decode it as a Vec<> of u8
 #[cfg(feature = "metadatadecode")]
 fn to_bytes(hex_str: &str) -> Vec<u8> {
     let hex_str = hex_str
@@ -16,9 +28,9 @@ fn to_bytes(hex_str: &str) -> Vec<u8> {
     hex::decode(hex_str).expect("valid bytes from hex")
 }
 
+/// decode a raw extrinsic hex string, take the chains metadata as input
 #[cfg(feature = "metadatadecode")]
 pub fn decode_extrinsic_hex_string<'a>(hexstring: &str, metadatablob: &[u8]) -> Extrinsic<'a> {
-    //  let jsoninstance = JsonrpseeClient
     let metadata_polkadot_scale: &[u8] = metadatablob;
     let ext_bytes = &mut &*to_bytes(hexstring);
     let metadata: Metadata = Metadata::from_bytes(metadata_polkadot_scale).expect("valid metadata");
