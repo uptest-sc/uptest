@@ -1,5 +1,20 @@
-# Uptest is a polkadot treasury funded library that is currently in development     
-# DO NOT USE IN PRODUCTION YET   
+# Uptest     
+
+Substrate r*U*ntime u*P*grade *TEST*ing library
+
+[![Crates.io LibUptest](https://img.shields.io/crates/v/libuptest.svg)](https://crates.io/crates/libuptest)
+[![Docs.rs Libuptest](https://img.shields.io/docsrs/libuptest/0.1.1)](https://docs.rs/libuptest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)   
+
+Funded by:  
+![Polkadot Treasury](polkadot-treasury-logo.svg)
+
+
+### Documentation:    
+[https://uptest-sc.github.io/](https://uptest-sc.github.io/)   
+[https://docs.rs/libuptest/0.1.1/libuptest/](https://docs.rs/libuptest/0.1.1/libuptest/)   
+
+
 
 ## Uptest 
 

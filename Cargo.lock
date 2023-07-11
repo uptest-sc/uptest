@@ -516,7 +516,7 @@ dependencies = [
 [[package]]
 name = "desub-common"
 version = "0.1.0"
-source = "git+https://github.com/uptest-sc/desub#093216444ef138ebebcd7fdd8f9841981c548973"
+source = "git+https://github.com/uptest-sc/desub?rev=0932164#093216444ef138ebebcd7fdd8f9841981c548973"
 dependencies = [
  "serde",
  "sp-core",
@@ -526,7 +526,7 @@ dependencies = [
 [[package]]
 name = "desub-current"
 version = "0.1.0"
-source = "git+https://github.com/uptest-sc/desub#093216444ef138ebebcd7fdd8f9841981c548973"
+source = "git+https://github.com/uptest-sc/desub?rev=0932164#093216444ef138ebebcd7fdd8f9841981c548973"
 dependencies = [
  "bitvec",
  "derive_more",

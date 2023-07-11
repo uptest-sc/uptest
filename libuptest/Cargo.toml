@@ -40,6 +40,7 @@ metadatadecode = ["desub-current", "frame-metadata"]
 version = "0.1.0"
 optional = true
 git = "https://github.com/uptest-sc/desub" #forked for smaller mods
+rev = "0932164"
 
 [dependencies.frame-metadata]
 version = "14.2"
