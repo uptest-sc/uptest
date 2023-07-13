@@ -81,32 +81,26 @@ pub async fn parse_pallet_storage_types(
     let metadata: Metadata = Metadata::from_bytes(metadata_polkadot_scale).expect("valid metadata");
     let storage_types = metadata.types.clone();
     let og_types = storage_types.types();
-    //  println!("got storage types.. : {:?}", og_types);
 
     let storage_entries = metadata.get_storage_entries();
-    //println!("Single: {:?}", storage_entries);
 
     let mut pallet_list: Vec<storage_map_info> = vec![];
     for item in storage_entries {
-        //   println!("Pallet name: {:?}", &item.prefix());
         let current_pallet_name = item.prefix();
 
-        //println!("Storage entries:");
-
-        // detect if type id's has changed
+        // todo: detect if type id's has changed
 
         for entry_to_scan in item.entries() {
             let mut pallet_info: storage_map_info = storage_map_info::new_empty();
             pallet_info.pallet_name = current_pallet_name.clone().to_string();
             pallet_info.storage_item_name = entry_to_scan.name.clone();
-            //    println!("Raw entry: {:?}", entry_to_scan);
+
             let storage_ent = &entry_to_scan.ty.to_owned();
-            // println!("Storage item: {:?}", storage_ent);
-            //println!("Storage item name: {:?}", entry_to_scan.name);
+            // match storage entry type
             match storage_ent {
-                StorageEntryType::Plain(_) => {
-                    //                    println!("Storage value detected");
+                StorageEntryType::Plain(varde) => {
                     pallet_info.storage_type = storage_types::StorageValue;
+                    pallet_info.type_id = varde.id();
                 }
                 // we only need the type def right now, lets ignore the hashing type and key atm
                 StorageEntryType::Map {
@@ -114,30 +108,23 @@ pub async fn parse_pallet_storage_types(
                     key: _,
                     value,
                 } => {
-                    let typid: u32 = value.id();
-                    pallet_info.type_id = typid.clone();
-                    //                println!("StorageMap detected with type id key: {:?}", typid);
-                    // make better
-                    for co in og_types.iter() {
-                        //    println!("detecting type");
-                        //       pallet_info.por_type = co.clone();
-                        if co.id() == typid {
-                            pallet_info.raw_type = co.ty().type_def().clone();
-                            //                          println!("Type detected: {:?}", co.ty().type_def());
-                        }
-                    }
+                    pallet_info.type_id = value.id(); 
                     pallet_info.storage_type = storage_types::StorageMap;
                 }
                 _ => {
                     //                println!("Could not detect storage type");
                     pallet_info.storage_type = storage_types::Unknown;
+                } 
+            } // set the raw_type
+            for co in og_types.iter() {
+                if co.id() == pallet_info.type_id {
+                    pallet_info.raw_type = co.ty().type_def().clone();
                 }
             }
             pallet_list.push(pallet_info);
         }
         //     println!("---------------------------------------\r\n");
     }
-    // println!("bytes are: ");
-    //println!("Amount of pallets:  {:?}", pallet_list.len());
+
     Ok(pallet_list)
 }
