@@ -41,11 +41,11 @@ pub async fn get_single_pallet_storage(wshost: &str, pallet_name: &str) -> Vec<s
     new_list
 }
 
-// display what pallet and functions where triggers in the X amount of latest finalized blocks
+/// display what pallet and functions where triggers in the X amount of latest finalized blocks
 pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) -> bool {
     let client = JsonrpseeClient::new(wshost).unwrap(); // change me
     let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
-    println!("Subscribing to latest finalized blocks");
+    println!("Subscribing to latest finalized blocks at {wshost:?}");
     let mut subscrib: SubscriptionWrapper<Header> = client
         .clone()
         .subscribe::<Header>(
@@ -59,7 +59,8 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
         let tmp_client = JsonrpseeClient::new(wshost).unwrap();
         let nextone = subscrib.next();
         let blocknr = nextone.unwrap().unwrap().number;
-        println!("Latest finalized block: {:?}", blocknr);
+        println!("------------------------------------------------");
+        println!("Latest finalized block number: #{}", blocknr);
         let blockhash: H256 = blocknumber_to_blockhash(tmp_client.clone(), blocknr.clone())
             .await
             .unwrap();
@@ -77,9 +78,14 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
             })
             .collect();
 
-        for myevent in decodedevent_list {
-            println!("decoded event: {:?}", myevent);
-        }
+            for eventet in decodedevent_list.into_iter() {
+                println!(
+                    "[Triggered event] Pallet: {} triggered event: {}",
+                    eventet.pallet_name, eventet.pallet_name
+                );
+            }
+        println!("------------------------------------------------\r\n");
+
     }
 
     let _ = subscrib.unsubscribe();
@@ -112,7 +118,7 @@ pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &st
             .await
             .unwrap(); // can we change this syntax so we are not looping clone's?
 
-        println!("Checking block #{:?}", blocknr);
+        println!("Checking block #{}", blocknr);
         let preblock = get_block_events(blockhash, client.clone()).await.unwrap();
         let extrinsics = preblock.block.extrinsics;
         println!("Got block events... Decoding it..");
