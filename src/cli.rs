@@ -11,8 +11,17 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 // cli
 use clap::{arg, Command};
 
+fn get_git_hash() -> String {
+	let output = std::process::Command::new("git")
+		.args(&["rev-parse", "--verify", "HEAD"])
+		.output().unwrap();
+	let git_hash = String::from_utf8(output.stdout).unwrap_or_default();
+	git_hash.trim().to_string()
+}
+
 pub fn gen_cli() -> Command {
-    Command::new("uptest")
+
+     Command::new("uptest")
         .about("substrate runtime UPgrade TESTing suit")
         .version(env!("CARGO_PKG_VERSION")) // read from Cargo.tomlss
         .subcommand_required(true)
@@ -107,12 +116,15 @@ pub fn gen_cli() -> Command {
             .about("Subscribe to a chain and display the events triggered in the latest blocks")
             .help_template("
             Usage example: uptest -w wshost blockamount
-            \r\n Connect to polkadot and view the latest 40 blocks: uptest -d wss://polkadot-rpc-tn.dwellir.com:443 40 
+            \r\n Connect to polkadot and view the latest 40 blocks: uptest -w wss://polkadot-rpc-tn.dwellir.com:443 40 
             \r\n Latest 50 blocks from the locally running substrate node: ./target/release/uptest -w ws://127.0.0.1:9944 50")
             .arg(arg!(<ws> "ws endpoint of the chain to connect"))
             .arg(arg!(<block_limit> "amount of blocks of latest blocks to subscribe to").required(true)),
         )
-        // read local wasm file and submit runtime upgrade
+        // subscribe to the chain, display the latest blocks and events triggered in those blocks
+        
+
+        // TODO: read local wasm file and submit runtime upgrade
         .subcommand(
             Command::new("submit-wasm")
             .short_flag('u')

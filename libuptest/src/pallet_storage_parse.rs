@@ -108,13 +108,13 @@ pub async fn parse_pallet_storage_types(
                     key: _,
                     value,
                 } => {
-                    pallet_info.type_id = value.id(); 
+                    pallet_info.type_id = value.id();
                     pallet_info.storage_type = storage_types::StorageMap;
                 }
                 _ => {
                     //                println!("Could not detect storage type");
                     pallet_info.storage_type = storage_types::Unknown;
-                } 
+                }
             } // set the raw_type
             for co in og_types.iter() {
                 if co.id() == pallet_info.type_id {

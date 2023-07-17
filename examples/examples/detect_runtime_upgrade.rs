@@ -9,14 +9,14 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 */
 
+use libuptest::decode_extrinsic::decode_extrinsic_hex_string;
 /// Detect what pallet methods was called, check if the chain has triggered a special function such as
 use libuptest::jsonrpseeclient::JsonrpseeClient;
-use libuptest::types::{event_summary, H256, PreBlock};
+use libuptest::types::{event_summary, PreBlock, H256};
 use libuptest::ws_mod::{
-    get_decoded_extrinsics_from_blockhash, get_latest_finalized_head, get_raw_metadata, get_block_events,
-    get_runtime_version,
+    get_block_events, get_decoded_extrinsics_from_blockhash, get_latest_finalized_head,
+    get_raw_metadata, get_runtime_version,
 };
-use libuptest::decode_extrinsic::decode_extrinsic_hex_string;
 //use std::str::FromStr;
 
 // There are several ways of detecting a runtime upgrade, subscribing to each block, parsing each block for the runtime upgrade method to be executed or just probing for RuntimeVersion changes
@@ -33,7 +33,7 @@ async fn main() -> anyhow::Result<()> {
     let client: JsonrpseeClient = JsonrpseeClient::with_default_url().unwrap(); // change me
     let metadatablob: Vec<u8> = get_raw_metadata(client.clone()).await.unwrap();
     println!("Catching latest block");
-    let blockhash: H256 = get_latest_finalized_head(client.clone()).await.unwrap();// get_latest_finalized_head(client.clone()).await.unwrap();//H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31").unwrap();//
+    let blockhash: H256 = get_latest_finalized_head(client.clone()).await.unwrap(); // get_latest_finalized_head(client.clone()).await.unwrap();//H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31").unwrap();//
     println!("Got block hash: {blockhash:?}");
     println!("Gathering extrinsics inside block");
     let decodedevent_list: Vec<event_summary> =
@@ -47,9 +47,9 @@ async fn main() -> anyhow::Result<()> {
 
     for exti in outputen.block.extrinsics {
         let _printme = decode_extrinsic_hex_string(&exti, &metadatablob);
-    //    println!("Decoded arguments: {:?}", printme.call_data.ty);//.call_data.ty);
+        //    println!("Decoded arguments: {:?}", printme.call_data.ty);//.call_data.ty);
     }
-    
+
     match contains_runtime_upgrade {
         true => println!("Contains runtime upgrade!"),
         _ => println!("does not contain runtime upgrade"),
