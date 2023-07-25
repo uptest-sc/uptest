@@ -22,7 +22,7 @@ use libuptest::ws_mod::{blocknumber_to_blockhash, get_block_events, get_raw_meta
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let wsinstance = "wss://polkadot-rpc-tn.dwellir.com:443"; // my node endpoint
-    let client: JsonrpseeClient =  JsonrpseeClient::new(wsinstance).unwrap();
+    let client: JsonrpseeClient = JsonrpseeClient::new(wsinstance).unwrap();
 
     println!("Subscribing");
     let mut subscrib: SubscriptionWrapper<Header> = client

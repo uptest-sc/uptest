@@ -22,6 +22,8 @@ pub mod ws_mod;
 
 //#[cfg(feature = "subxthelper")]
 //pub mod subxt_helper;
+#[cfg(feature = "migrationsearch")]
+pub mod migration_search;
 
 #[cfg(feature = "metadatadecode")]
 pub mod decode_extrinsic;

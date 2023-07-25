@@ -78,14 +78,13 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
             })
             .collect();
 
-            for eventet in decodedevent_list.into_iter() {
-                println!(
-                    "[Triggered event] Pallet: {} triggered event: {}",
-                    eventet.pallet_name, eventet.pallet_name
-                );
-            }
+        for eventet in decodedevent_list.into_iter() {
+            println!(
+                "[Triggered event] Pallet: {} triggered event: {}",
+                eventet.pallet_name, eventet.pallet_name
+            );
+        }
         println!("------------------------------------------------\r\n");
-
     }
 
     let _ = subscrib.unsubscribe();

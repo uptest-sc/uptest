@@ -12,16 +12,16 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 use clap::{arg, Command};
 
 fn get_git_hash() -> String {
-	let output = std::process::Command::new("git")
-		.args(&["rev-parse", "--verify", "HEAD"])
-		.output().unwrap();
-	let git_hash = String::from_utf8(output.stdout).unwrap_or_default();
-	git_hash.trim().to_string()
+    let output = std::process::Command::new("git")
+        .args(&["rev-parse", "--verify", "HEAD"])
+        .output()
+        .unwrap();
+    let git_hash = String::from_utf8(output.stdout).unwrap_or_default();
+    git_hash.trim().to_string()
 }
 
 pub fn gen_cli() -> Command {
-
-     Command::new("uptest")
+    Command::new("uptest")
         .about("substrate runtime UPgrade TESTing suit")
         .version(env!("CARGO_PKG_VERSION")) // read from Cargo.tomlss
         .subcommand_required(true)
@@ -121,8 +121,7 @@ pub fn gen_cli() -> Command {
             .arg(arg!(<ws> "ws endpoint of the chain to connect"))
             .arg(arg!(<block_limit> "amount of blocks of latest blocks to subscribe to").required(true)),
         )
-        // subscribe to the chain, display the latest blocks and events triggered in those blocks
-        
+        // subscribe to the chain, display the latest blocks and events triggered in those blocks 
 
         // TODO: read local wasm file and submit runtime upgrade
         .subcommand(
