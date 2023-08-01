@@ -1,6 +1,6 @@
 [package]
 name = "libuptest"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Filip Kalebo<info@rustsyndi.cat>"]
 license = "MIT"
@@ -17,7 +17,7 @@ hex = { version = "0.4.3", features = ["alloc"]}
 anyhow = "1.0.69"
 serde_json = { version = "1" }
 futures = "0.3.26"
-serde = { version = "1.0.154", features = ["derive"], default-features = false }
+serde = { version = "1.0.173", features = ["derive"], default-features = false }
 fixed-hash = "0.8"
 maybe-async = { version = "0.2.7" }
 async-trait = "0.1.68"
@@ -25,10 +25,12 @@ impl-serde = { version = "0.4.0", default-features = false }
 tokio = { version = "1.27", features = ["full"] }
 
 
+
 [features]
-all = ["metadatadecode"]#, "subxthelper"
+all = ["metadatadecode", "migrationsearch"]#, "subxthelper"
 metadatadecode = ["desub-current", "frame-metadata"]
 #subxthelper = ["subxt"]
+migrationsearch = ["reqwest", "glob", "regex", "tar", "flate2"]
 
 #[dependencies.subxt]
 #version = "0.28.0"
@@ -45,4 +47,25 @@ rev = "0932164"
 [dependencies.frame-metadata]
 version = "14.2"
 features = ["v14", "std", "scale-info"]
+optional = true
+
+[dependencies.reqwest]
+version = "0.11.18"
+features = ["json"]
+optional = true
+
+[dependencies.glob]
+version = "0.3.1"
+optional = true
+
+[dependencies.regex] 
+version = "1.9.1" 
+optional = true
+
+[dependencies.flate2] 
+version = "1.0.26"
+optional = true
+
+[dependencies.tar] 
+version = "0.4.39"
 optional = true

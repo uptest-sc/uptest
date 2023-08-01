@@ -20,7 +20,7 @@ mod helper;
 async fn main() {
     println!("Uptest command line tool");
     let matches: ArgMatches = cli::gen_cli().get_matches();
-  //  println!("Matches: {:?}", matches.subcommand_name());
+    //  println!("Matches: {:?}", matches.subcommand_name());
 
     match matches.subcommand_name() {
         Some("pallet-method-sub") => {
@@ -65,6 +65,13 @@ async fn main() {
             );
             }
         }
+
+        Some("chain-info") => {
+            let sub_m = matches.subcommand_matches("chain-info").unwrap();
+            let ws_host: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
+            let out = helper::chain_info(&ws_host).await;
+        }
+
         Some("pallet-storage") => {
             let sub_m = matches.subcommand_matches("pallet-storage").unwrap();
             let ws_host: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
@@ -95,7 +102,7 @@ async fn main() {
             if let Some(c) = sub_m.get_one::<String>("block_limit") {
                 let k: u32 = c.parse::<u32>().unwrap();
                 dalimit = k;
-            //    println!("Value for blocklimit: {c}");
+                //    println!("Value for blocklimit: {c}");
             }
 
             //let block_amount: &u32 = sub_m.get_one("blocklimit").unwrap();
