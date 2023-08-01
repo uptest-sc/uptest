@@ -16,9 +16,29 @@ use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper
 use libuptest::metadata::read_wasm_binary;
 use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_info};
 use libuptest::types::Header;
-use libuptest::types::{event_summary, H256};
-use libuptest::ws_mod::{blocknumber_to_blockhash, get_block_events, get_raw_metadata};
+use libuptest::types::{event_summary, RuntimeVersion, H256};
+use libuptest::ws_mod::{
+    blocknumber_to_blockhash, get_block_events, get_raw_metadata, get_runtime_version,
+};
 use std::path::Path;
+
+/// display meta information about chain X
+pub async fn chain_info(wshost: &str) -> bool {
+    let client = JsonrpseeClient::new(wshost).unwrap();
+    let chain_info: RuntimeVersion = get_runtime_version(client).await.unwrap();
+    println!("----Chain-Info----");
+    println!("Chain Name: {:?}
+Runtime version: {:?}
+Authoring Version: {:?}
+State Version: {:?}",
+        chain_info.spec_name,
+        chain_info.spec_version,
+        chain_info.authoring_version,
+        chain_info.state_version
+    );
+    println!("--E-O-L--");
+    true
+}
 
 /// return all storagevalues and storagemaps for all pallets
 pub async fn get_all_pallets_storage(wshost: &str) -> Vec<storage_map_info> {
@@ -78,14 +98,13 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
             })
             .collect();
 
-            for eventet in decodedevent_list.into_iter() {
-                println!(
-                    "[Triggered event] Pallet: {} triggered event: {}",
-                    eventet.pallet_name, eventet.pallet_name
-                );
-            }
+        for eventet in decodedevent_list.into_iter() {
+            println!(
+                "[Triggered event] Pallet: {} triggered event: {}",
+                eventet.pallet_name, eventet.pallet_name
+            );
+        }
         println!("------------------------------------------------\r\n");
-
     }
 
     let _ = subscrib.unsubscribe();
