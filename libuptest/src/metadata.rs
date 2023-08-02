@@ -17,10 +17,28 @@ use tokio::io::AsyncReadExt;
 
 use crate::error::Error;
 
-/// read the runtime upgrade wasm file, non blocking async file read with tokio
+/*
+/// read the runtime upgrade wasm file, non blocking async file read with tokio, this does not work when reading wasm binaries to submit as runtime upgrade
 pub async fn read_wasm_binary(file_location: &Path) -> anyhow::Result<u8, Error> {
     let mut file_blob: File = File::open(file_location).await?;
     let mut buffer = [0; 10];
     let n = file_blob.read(&mut buffer).await?;
     Ok(n.try_into().unwrap())
+}
+*/
+
+/// use this function to convert it to a wasm code you can use to submit a runtime upgrade
+/// example usage with subxt:   
+///     let wasm_path = Path::new("/tmp/substrate-node-template/target/release/wbuild/node-template-runtime/node_template_runtime.compact.wasm");
+///    // read binary
+///    let code: Vec<u8> = read_wasm_binary_correct(wasm_path).await;
+///    // create system set_code call
+///    let call = nodetemplate::runtime_types::node_template_runtime::RuntimeCall::System(
+///        SystemCall::set_code {
+///            code: code.into(),
+///        },
+///    ); 
+pub async fn read_wasm_binary_correct(file_location: &Path) -> Vec<u8> {
+    let filepath = tokio::fs::read(file_location).await.expect("Could not read wasm file");
+    filepath
 }
