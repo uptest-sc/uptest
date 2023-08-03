@@ -11,6 +11,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 // cli
 use clap::{arg, Command};
 
+/*
 fn get_git_hash() -> String {
     let output = std::process::Command::new("git")
         .args(&["rev-parse", "--verify", "HEAD"])
@@ -19,6 +20,7 @@ fn get_git_hash() -> String {
     let git_hash = String::from_utf8(output.stdout).unwrap_or_default();
     git_hash.trim().to_string()
 }
+*/
 
 pub fn gen_cli() -> Command {
     Command::new("uptest")
@@ -86,8 +88,10 @@ pub fn gen_cli() -> Command {
             Command::new("storage-changes")
             .short_flag('c')
             .long_flag("storage_changes")
-            .about("Displays the changes made to storage maps and storage values after a runtime upgrade, similar to pallets-storage(-p) but subscribes to chain")
-            .help_template("Usage example: uptest -c -w ws://127.0.0.1:9944")
+            .about("Displays the changes made to storage maps and storage values after a runtime upgrade, similar to pallets-storage(-p) but subscribes to chain
+Subscribes to chain with a 150 block limit > wait for sudo runtime upgrade tx > get's new storage types > compares old types to new storage types and displays a diff/changelog
+            ")
+            .help_template("Usage example: uptest -c ws://127.0.0.1:9944")
             .arg(arg!(<ws> "ws endpoint of the chain to connect")),
         )
         .subcommand(
