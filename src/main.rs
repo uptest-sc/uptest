@@ -11,8 +11,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 // Uptest --chain X --wshost ws://host:port --pallet-test scheduler --sudo "seed goes here"
 
 use clap::ArgMatches;
-use libuptest::{jsonrpseeclient::JsonrpseeClient, pallet_storage_parse::storage_map_info};
-use std::ffi::OsStr;
+use libuptest::{pallet_storage_parse::storage_map_info};
 mod cli;
 mod helper;
 
@@ -38,14 +37,16 @@ async fn main() {
         }
         Some("storage-changes") => {
             let matched = matches.subcommand_matches("storage-changes").unwrap();
-            let ws_host = matched.get_one::<String>("ws_host").unwrap();
-            // Use the `ws_host` value in your client code
-            println!("ws_host: {}", ws_host);
+            let ws_host = matched.get_one::<String>("ws").expect("Could not get ws host");
+            // Use the `ws_host` value in your client code]
+            println!("running ws host: {:?}", ws_host);
+            let _out_me = helper::storage_changes(ws_host, 150u32).await;
         }
+        //Some("") => {}
 
         Some("pallets-storage") => {
             let sub_m = matches.subcommand_matches("pallets-storage").unwrap();
-            let ws_host: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
+            let ws_host: String = sub_m.get_one::<String>("ws").expect("Could not get ws host").to_owned();
 
             // some input validation
             match &ws_host[0..5] == "ws://" {
@@ -68,13 +69,13 @@ async fn main() {
 
         Some("chain-info") => {
             let sub_m = matches.subcommand_matches("chain-info").unwrap();
-            let ws_host: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
-            let out = helper::chain_info(&ws_host).await;
+            let ws_host: String = sub_m.get_one::<String>("ws").expect("Could not get ws host").to_owned();
+            let _out = helper::chain_info(&ws_host).await;
         }
 
         Some("pallet-storage") => {
             let sub_m = matches.subcommand_matches("pallet-storage").unwrap();
-            let ws_host: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
+            let ws_host: String = sub_m.get_one::<String>("ws").expect("Could not get ws host").to_owned();
             let pallet_name: String = sub_m.get_one::<String>("pallet_name").unwrap().to_owned();
 
             println!("Gathering information about pallet: {pallet_name:?}");
@@ -97,7 +98,7 @@ async fn main() {
 
         Some("block-watch") => {
             let sub_m = matches.subcommand_matches("block-watch").unwrap();
-            let wshost: String = sub_m.get_one::<String>("ws").unwrap().to_owned();
+            let wshost: String = sub_m.get_one::<String>("ws").expect("Could not get ws host").to_owned();
             let mut dalimit: u32 = 0;
             if let Some(c) = sub_m.get_one::<String>("block_limit") {
                 let k: u32 = c.parse::<u32>().unwrap();
@@ -110,7 +111,7 @@ async fn main() {
             // let block_amount: u32 = sub_m.get_one::<u32>("block_limit").unwrap().to_owned();
 
             let _runner = helper::event_summary_for_latest_blocks(&wshost, dalimit).await;
-            println!("all good");
+           // println!("EOL");
         }
         Some("submit-wasm") => {
             /*
@@ -119,7 +120,7 @@ async fn main() {
             let tmp_client = JsonrpseeClient::with_default_url().unwrap();
             helper::submit_wasm_runtime_upgrade(tmp_client, &file_path).await;
             */
-            todo!("todo, impl signers");
+            println!("todo, in the meanwhile use: https://github.com/uptest-sc/submit-runtime-upgrade");
         }
         _ => println!("invalid arguments"),
     }

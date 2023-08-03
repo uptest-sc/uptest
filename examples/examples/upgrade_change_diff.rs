@@ -19,7 +19,7 @@ use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_in
 
 #[tokio::main]
 async fn main() -> anyhow::Result<(), libuptest::error::Error> {
-    let client = JsonrpseeClient::with_default_url().unwrap();
+    let client = JsonrpseeClient::with_default_url().unwrap();//.expect("Could not connect to chain");
     let old_version = get_runtime_version(client.clone()).await.unwrap();
     println!(
         "Connected to: {:?}  Runtime version: {:?}",
@@ -69,9 +69,16 @@ async fn main() -> anyhow::Result<(), libuptest::error::Error> {
 
     // Print the changed items
     for item in &changed_items {
+        //let old_query: storage_map_info =  *item.to_owned();
+        let old: &storage_map_info = old_pallet_list.iter().find(|elem| elem.storage_item_name == item.storage_item_name).expect("Could not detect the previous storage item type");
+        //old = old_pallet_list.get_mut::<storage_map_info>(old_query.into());
         println!(
-            "Changed {:?}: {:?} in Pallet: {:?} to the new type: {:?}",
-            item.storage_type, item.storage_item_name, item.pallet_name, item.raw_type
+            "Pallet name:  {:?}
+Storage item name:  {:?} 
+Storage item type:  {:?} 
+Old storage type:  {:?}
+New storage type: {:?}
+", item.pallet_name, item.storage_item_name, item.storage_type, old.raw_type, item.raw_type
         );
     }
     // lets check the new storage items that has been added to the runtime

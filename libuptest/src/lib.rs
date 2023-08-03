@@ -11,7 +11,6 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 #![feature(error_in_core)]
 
-mod chains; // depricate me
 pub mod codec;
 mod connect;
 pub mod error;
