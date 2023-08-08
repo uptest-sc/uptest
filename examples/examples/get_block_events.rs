@@ -17,7 +17,6 @@ use libuptest::types::Header;
 use libuptest::types::{event_summary, H256};
 use libuptest::ws_mod::{blocknumber_to_blockhash, get_block_events, get_raw_metadata};
 
-use std::str::FromStr;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
