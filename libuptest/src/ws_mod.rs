@@ -184,9 +184,9 @@ pub async fn event_watch(
     block_limit: u32,
 ) -> anyhow::Result<H256, crate::error::Error> {
     let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
-    let blockhash: H256 =
-        H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31")
-            .unwrap();
+    //  let blockhash: H256 =
+    //      H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31")
+    //          .unwrap();
 
     let mut subscrib: SubscriptionWrapper<Header> = client
         .subscribe::<Header>(
@@ -197,6 +197,7 @@ pub async fn event_watch(
         .unwrap();
 
     for _ in 0..block_limit {
+        //        println!("event watch start");
         let tmp_client = client.clone(); // change me
         let nextone = subscrib.next();
         let block_nr = nextone.unwrap().unwrap().number;
@@ -212,7 +213,7 @@ pub async fn event_watch(
                 decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadatablob))
             })
             .collect();
-
+        //     println!("Events triggered: {:?}", decodedevent_list);
         match decodedevent_list.contains(&event) {
             true => {
                 let _ = subscrib.unsubscribe(); // unsubscribe before killing it
@@ -224,6 +225,8 @@ pub async fn event_watch(
 
     println!("unsubscribing");
     let _ = subscrib.unsubscribe();
-
-    Ok(blockhash) // crate::error::Error::EventNotFound
+    let fake_blockhash: H256 =
+        H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31")
+            .unwrap();
+    Ok(fake_blockhash) // crate::error::Error::EventNotFound
 }

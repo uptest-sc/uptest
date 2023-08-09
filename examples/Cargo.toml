@@ -1,16 +1,18 @@
 [package]
 name = "uptest-examples"
 authors = ["Rust Syndicate"]
-version = "0.1.1"
+version = "0.1.2"
 description = "Examples for libuptest"
 license = "MIT"
 edition = "2021"
 
 [dependencies]
-libuptest = { path = "../libuptest", version = "0.1.1", features = ["metadatadecode", "migrationsearch"] } #  "subxthelper"
+libuptest = { path = "../libuptest", version = "0.1.1", features = ["metadatadecode", "migrationsearch", "subxthelper"] } #  
 anyhow =  "1.0.70"
 tokio = { version = "1.27", features = ["full"] }
 jsonrpsee = { version = "0.16.2",  features = ["server", "ws-client", "macros", "client-ws-transport"]}
 jsonrpsee-core = "0.16.2"
 maybe-async = { version = "0.2.7" }
 async-trait = "0.1.68"
+subxt-signer = { version = "0.30.0"}
+subxt =  { version = "0.30.0"}

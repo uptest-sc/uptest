@@ -29,6 +29,9 @@ pub mod decode_extrinsic;
 #[cfg(feature = "metadatadecode")]
 pub mod pallet_storage_parse;
 
+#[cfg(feature = "subxthelper")]
+pub mod subxt_helper;
+
 /*
 pub struct PalletTest {
     pallet_name: String,

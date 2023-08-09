@@ -28,15 +28,12 @@ impl H256 {
     */
 }
 
-
 #[cfg(feature = "subxthelper")]
 impl From<subxt::utils::H256> for H256 {
     fn from(inputen: subxt::utils::H256) -> H256 {
         H256::from_slice(inputen.as_ref())
     }
 }
-
-
 
 /// Block Header containing the block nr
 #[derive(Debug, Deserialize)]
