@@ -31,12 +31,11 @@ pub struct storage_map_info {
     pub storage_type: storage_types,
 }
 
-
 #[derive(Debug)]
 /// diff log of what storage types have changed
 pub struct pallet_storage_diff {
     pub old_type: storage_map_info,
-    pub new_type: storage_map_info
+    pub new_type: storage_map_info,
 }
 
 struct MyTypeDef;

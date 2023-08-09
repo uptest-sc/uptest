@@ -10,7 +10,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 */
 /// get the block events from the latest block and return the block events, decoded extrinsics
 use libuptest::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_summary};
-use libuptest::jsonrpseeclient::{JsonrpseeClient};
+use libuptest::jsonrpseeclient::JsonrpseeClient;
 use libuptest::types::{event_summary, H256};
 use libuptest::ws_mod::{get_block_events, get_raw_metadata};
 

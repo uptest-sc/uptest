@@ -26,6 +26,8 @@ pub async fn read_wasm_binary(file_location: &Path) -> anyhow::Result<u8, Error>
 
 /// use this function to convert it to a wasm code you can use to submit a runtime upgrade
 pub async fn read_wasm_binary_correct(file_location: &Path) -> Vec<u8> {
-    let filepath = tokio::fs::read(file_location).await.expect("Could not read wasm file");
+    let filepath = tokio::fs::read(file_location)
+        .await
+        .expect("Could not read wasm file");
     filepath
 }

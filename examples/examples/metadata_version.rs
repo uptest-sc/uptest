@@ -38,7 +38,7 @@ async fn main() -> anyhow::Result<()> {
         "Edgeware", edg_version
     );
     let finalized_block_hash: H256 = get_latest_finalized_head(dial_edg).await.unwrap();
- //   let str_it = format!("{:?}", finalized_block_hash);
+    //   let str_it = format!("{:?}", finalized_block_hash);
     println!("The latest finalized head is: {:?}", finalized_block_hash);
 
     Ok(())
