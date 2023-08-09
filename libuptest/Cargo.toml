@@ -29,12 +29,12 @@ tokio = { version = "1.27", features = ["full"] }
 [features]
 all = ["metadatadecode", "migrationsearch"]#, "subxthelper"
 metadatadecode = ["desub-current", "frame-metadata"]
-#subxthelper = ["subxt"]
+subxthelper = ["subxt"]
 migrationsearch = ["reqwest", "glob", "regex", "tar", "flate2"]
 
-#[dependencies.subxt]
-#version = "0.28.0"
-#optional = true
+[dependencies.subxt]
+version = "0.31.0"
+optional = true
 #git = "https://github.com/paritytech/subxt/" 
 
 
