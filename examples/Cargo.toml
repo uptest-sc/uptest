@@ -1,7 +1,7 @@
 [package]
 name = "uptest-examples"
 authors = ["Rust Syndicate"]
-version = "0.1.1"
+version = "0.1.2"
 description = "Examples for libuptest"
 license = "MIT"
 edition = "2021"
@@ -14,3 +14,5 @@ jsonrpsee = { version = "0.16.2",  features = ["server", "ws-client", "macros", 
 jsonrpsee-core = "0.16.2"
 maybe-async = { version = "0.2.7" }
 async-trait = "0.1.68"
+subxt-signer = { version = "0.30.0"}
+subxt =  { version = "0.30.0"}
