@@ -1,6 +1,5 @@
 // waits until event X is triggered then submits a subxt transaction
 
-
 use libuptest::subxt_helper::tx_schedule;
 use libuptest::types::event_summary;
 use subxt::{OnlineClient, PolkadotConfig};
