@@ -5,7 +5,7 @@ edition = "2021"
 license = "MIT"
 homepage = "https://github.com/uptest-sc/uptest/"
 description = "substrate rUntime uPgrade TESTing suit"
-readme = "README.md"
+readme = "Readme.md"
 
 
 [dependencies]
