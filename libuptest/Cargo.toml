@@ -27,7 +27,7 @@ tokio = { version = "1.27", features = ["full"] }
 
 
 [features]
-all = ["metadatadecode", "migrationsearch"]#, "subxthelper"
+all = ["metadatadecode", "migrationsearch", "subxthelper"]
 metadatadecode = ["desub-current", "frame-metadata"]
 subxthelper = ["subxt", "subxt-signer", "subxt-macro", "subxt-metadata"]
 migrationsearch = ["reqwest", "glob", "regex", "tar", "flate2"]
