@@ -15,9 +15,11 @@ pub use jsonrpsee::ws_client::{WsClient, WsClientBuilder};
 use crate::jsonrpseeclient::rpcstuff::RpcParams;
 use crate::jsonrpseeclient::subscription::Request;
 use crate::jsonrpseeclient::JsonrpseeClient;
-use crate::rpc_params;
 use crate::types::{PreBlock, H256};
+use crate::{metadata, rpc_params};
 use std::str::FromStr;
+
+use crate::error::Error as standard_error;
 
 #[cfg(feature = "metadatadecode")]
 use crate::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_summary};
@@ -57,9 +59,7 @@ pub async fn get_metadata_version(
 
 /// get the chain's metadata and return it as a Vec<u8>
 #[maybe_async::maybe_async(?Send)]
-pub async fn get_raw_metadata(
-    client: JsonrpseeClient,
-) -> anyhow::Result<Vec<u8>, crate::error::Error> {
+pub async fn get_raw_metadata(client: JsonrpseeClient) -> anyhow::Result<Vec<u8>, standard_error> {
     let hex_data: String = client
         .request("state_getMetadata", RpcParams::new())
         .await?;
@@ -72,7 +72,7 @@ pub async fn get_raw_metadata(
 pub async fn blocknumber_to_blockhash(
     client: JsonrpseeClient,
     block_nr: String,
-) -> anyhow::Result<H256, crate::error::Error> {
+) -> anyhow::Result<H256, standard_error> {
     let raw_data: String = client
         .request("chain_getBlockHash", rpc_params![block_nr])
         .await?;
@@ -87,7 +87,7 @@ pub async fn blocknumber_to_blockhash(
 pub async fn blockhash_to_block(
     client: JsonrpseeClient,
     block_hash: H256,
-) -> anyhow::Result<H256, crate::error::Error> {
+) -> anyhow::Result<H256, standard_error> {
     let raw_data: String = client
         .request("chain_getBlock", rpc_params![block_hash.to_string()])
         .await?;
@@ -115,12 +115,40 @@ pub async fn get_latest_finalized_head(client: JsonrpseeClient) -> anyhow::Resul
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_latest_finalized_head(
     client: JsonrpseeClient,
-) -> anyhow::Result<H256, crate::error::Error> {
+) -> anyhow::Result<H256, standard_error> {
     let hex_data: String = client
         .request("chain_getFinalizedHead", RpcParams::new())
         .await?;
     let finb: H256 = H256::from_str(&hex_data.as_str())?;
     Ok(finb)
+}
+
+/// return all block events in event_summary lower case strings
+#[cfg(feature = "metadatadecode")]
+#[maybe_async::maybe_async(?Send)]
+pub async fn get_block_events_lower_case(
+    blockhash: H256,
+    client: JsonrpseeClient,
+    metadata: Vec<u8>,
+) -> anyhow::Result<Vec<event_summary>, standard_error> {
+    let preblock: PreBlock = get_block_events(blockhash, client).await.unwrap();
+    let extrinsics: Vec<String> = preblock.block.extrinsics;
+    let decodedevent_list: Vec<event_summary> = extrinsics
+        .clone()
+        .iter()
+        .map(|n| decodec_to_event_summary(decode_extrinsic_hex_string(n.as_str(), &metadata)))
+        .collect();
+
+    // convert to lower case
+    let loop_it: Vec<event_summary> = decodedevent_list
+        .iter()
+        .map(|n| event_summary {
+            pallet_name: n.pallet_name.to_ascii_lowercase(),
+            pallet_method: n.pallet_method.to_ascii_lowercase(),
+        })
+        .collect();
+
+    Ok(loop_it)
 }
 
 /// get block events in block
@@ -166,6 +194,59 @@ pub async fn get_runtime_version(
         .request("state_getRuntimeVersion", RpcParams::new())
         .await?;
     Ok(runtimeversion)
+}
+
+/// same as event_watch but supports non case sensitive
+/// event search, event_summary non case sensitive
+pub async fn event_watch_non_case_sensitive(
+    client: JsonrpseeClient,
+    event_to_find: event_summary,
+    block_limit: u32,
+) -> anyhow::Result<H256, crate::error::Error> {
+    /*
+      let fake_blockhash: H256 =
+          H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31")
+              .unwrap();
+    */
+
+    // convert the event to lower case in order to match it
+    // ascii lowercase match https://doc.rust-lang.org/std/string/struct.String.html#method.to_ascii_lowercase
+    let my_event: event_summary = event_summary {
+        pallet_name: event_to_find.pallet_name.to_ascii_lowercase(),
+        pallet_method: event_to_find.pallet_method.to_ascii_lowercase(),
+    };
+    //  get_block_events_lower_case get_block_events_lower_case
+    let mut subscrib: SubscriptionWrapper<Header> = client
+        .subscribe::<Header>(
+            "chain_subscribeFinalizedHeads",
+            RpcParams::new(),
+            "chain_unsubscribeFinalizedHeads",
+        )
+        .unwrap();
+    let metadatablob: Vec<u8> = get_raw_metadata(client.clone()).await?;
+
+    for _ in 0..block_limit {
+        let tmp_client = client.clone(); // change me
+        let nextone = subscrib.next();
+        let block_nr = nextone.unwrap().unwrap().number; // change me
+        let tmp_blockhash = blocknumber_to_blockhash(tmp_client.clone(), block_nr).await?;
+        // get block events in event_summary with ascii lowercase String values
+        let block_events_lower_case: Vec<event_summary> =
+            get_block_events_lower_case(tmp_blockhash, tmp_client.clone(), metadatablob.clone())
+                .await?;
+
+        // find the event in the event list
+        match block_events_lower_case.contains(&my_event) {
+            true => {
+                let _ = subscrib.unsubscribe(); // unsubscribe before killing it
+                                                // return the hash of the block the event was found in
+                return Ok(tmp_blockhash);
+            }
+            false => continue,
+        };
+    }
+
+    Err(standard_error::EventNotFound) //Ok(fake_blockhash)
 }
 
 /// return the H256 hash of the block the user given event is triggered on
@@ -225,8 +306,6 @@ pub async fn event_watch(
 
     println!("unsubscribing");
     let _ = subscrib.unsubscribe();
-    let fake_blockhash: H256 =
-        H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31")
-            .unwrap();
-    Ok(fake_blockhash) // crate::error::Error::EventNotFound
+
+    Err(standard_error::EventNotFound) // Ok(fake_blockhash) // crate::error::Error::EventNotFound
 }
