@@ -3,7 +3,7 @@
 Substrate r*U*ntime u*P*grade *TEST*ing library
 
 [![Crates.io LibUptest](https://img.shields.io/crates/v/libuptest.svg)](https://crates.io/crates/libuptest)
-[![Docs.rs Libuptest](https://img.shields.io/docsrs/libuptest/0.1.1)](https://docs.rs/libuptest)
+[![Docs.rs Libuptest](https://img.shields.io/docsrs/libuptest/0.1.2)](https://docs.rs/libuptest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)   
 
 Funded by:  
@@ -12,9 +12,10 @@ Funded by:
 
 ### Documentation:    
 [https://uptest-sc.github.io/](https://uptest-sc.github.io/)   
-[https://docs.rs/libuptest/0.1.1/libuptest/](https://docs.rs/libuptest/0.1.1/libuptest/)   
+[https://docs.rs/libuptest/0.1.2/libuptest/](https://docs.rs/libuptest/0.1.2/libuptest/)   
 
-
+### Latest release:   
+0.1.2      
 
 ## Uptest 
 
@@ -76,6 +77,9 @@ The rpcclient comes with 5 different "default" chain endpoints:
 *  kusama_default_url -> wss://kusama-rpc-tn.dwellir.com:443   
 *  sora_default_url -> wss://ws.mof.sora.org:443   
 
+
+## Examples and Documentation:   
+[https://uptest-sc.github.io/](https://uptest-sc.github.io/)    
 
 
 ## Runtime Migrations links:   

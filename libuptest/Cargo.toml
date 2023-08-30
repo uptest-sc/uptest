@@ -1,6 +1,6 @@
 [package]
 name = "libuptest"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 authors = ["Filip Kalebo<info@rustsyndi.cat>"]
 license = "MIT"
@@ -27,10 +27,11 @@ rand = "0.8.5"
 
 
 [features]
-all = ["metadatadecode", "migrationsearch", "subxthelper"]
+all = ["metadatadecode", "migrationsearch", "subxthelper", "auto-test"]
 metadatadecode = ["desub-current", "frame-metadata"]
 subxthelper = ["subxt", "subxt-signer", "subxt-macro", "subxt-metadata"]
 migrationsearch = ["reqwest", "glob", "regex", "tar", "flate2"]
+auto-test = []
 
 [dependencies.subxt-macro]
 version = "0.30.0"
