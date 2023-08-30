@@ -18,16 +18,25 @@ use desub_current::{
     Metadata,
 };
 
-type TypeDef = desub_current::scale_info::TypeDef<PortableForm>;
+pub type TypeDef = desub_current::scale_info::TypeDef<PortableForm>;
+pub type TypeDefReg = desub_current::scale_info::TypeDefPrimitive;
+pub type TypeDefComposite = desub_current::scale_info::TypeDefComposite;
+pub type TypeDefTuple = desub_current::scale_info::TypeDefTuple;
+
 use frame_metadata::v14::StorageEntryType; // v14 only rn..
 
+/// Struct used to help parse pallet storage information in a human readable format
 #[derive(Debug, PartialEq)]
 pub struct storage_map_info {
+    /// Name of the Pallet
     pub pallet_name: String,
+    /// Name of storage item  
     pub storage_item_name: String, // name of storagemap
-    pub type_id: u32,              // take the type id and query the type_id to type function
-
+    /// Storage ID type
+    pub type_id: u32, // take the type id and query the type_id to type function
+    /// Raw storage type
     pub raw_type: desub_current::scale_info::TypeDef<PortableForm>,
+    /// StorageMap or StorageValue
     pub storage_type: storage_types,
 }
 

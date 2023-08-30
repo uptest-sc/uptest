@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 // Build mandoc
 use std::fs;
 
-include!("./src/cli.rs");
+include!("./cli/src/cli.rs");
 
 fn main() -> std::io::Result<()> {
     let out_dir = std::env::current_dir()?;

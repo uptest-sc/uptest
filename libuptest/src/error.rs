@@ -30,6 +30,8 @@ pub enum Error {
     ErrorEvent,
     /// Could not find event in the latest blocks
     EventNotFound,
+    /// Could not find the storage item
+    StorageItemNotFound,
     /// hex crate error
     HexError(hex::FromHexError),
     /// H256 fast hash hex decoding error
@@ -46,6 +48,7 @@ pub enum Error {
     /// Could not establish a subscription connection
     ConnectionSubscriptionProblem,
     Client(Box<dyn core::error::Error + Send + Sync + 'static>),
+    Anyhow(anyhow::Error),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -64,6 +67,12 @@ impl From<serde_json::error::Error> for Error {
 impl From<hex::FromHexError> for Error {
     fn from(value: hex::FromHexError) -> Self {
         Self::HexError(value)
+    }
+}
+
+impl From<anyhow::Error> for Error {
+    fn from(src: anyhow::Error) -> Error {
+        Error::Anyhow(src)
     }
 }
 

@@ -19,10 +19,11 @@ pub mod metadata;
 pub mod types;
 pub mod ws_mod;
 
-//#[cfg(feature = "subxthelper")]
-//pub mod subxt_helper;
 #[cfg(feature = "migrationsearch")]
 pub mod migration_search;
+
+#[cfg(feature = "auto-test")]
+pub mod test_generation;
 
 #[cfg(feature = "metadatadecode")]
 pub mod decode_extrinsic;

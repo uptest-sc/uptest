@@ -1,6 +1,6 @@
 [package]
 name = "uptest"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 license = "MIT"
 homepage = "https://github.com/uptest-sc/uptest/"
@@ -11,14 +11,14 @@ readme = "README.md"
 [workspace]
 members = [
 	"libuptest",
-	"cli",
-	"examples"
+	"examples",
+	"cli"
 ]
 
 
 [dependencies]
 clap = { version = "4.1.4", features=["derive"]}
-libuptest = { path = "libuptest/", version = "0.1.2", features = ["metadatadecode"]}
+libuptest = { path = "libuptest/", version = "0.1.1", features = ["metadatadecode"]}
 tokio = { version = "1.27", features = ["full"] }
 hex = { version = "0.4.3", features = ["alloc"]}
 anyhow = "1.0.69"

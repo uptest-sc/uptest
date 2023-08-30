@@ -10,10 +10,12 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 */
 
 use libuptest::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_summary};
-use libuptest::jsonrpseeclient::subscription::Subscribe;
 use libuptest::jsonrpseeclient::subscription::HandleSubscription;
+use libuptest::jsonrpseeclient::subscription::Subscribe;
 use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper};
-use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_info, pallet_storage_diff};
+use libuptest::pallet_storage_parse::{
+    pallet_storage_diff, parse_pallet_storage_types, storage_map_info,
+};
 use libuptest::types::Header;
 use libuptest::types::{event_summary, RuntimeVersion, H256};
 use libuptest::ws_mod::{
@@ -27,7 +29,8 @@ pub async fn chain_info(wshost: &str) -> bool {
     let client = JsonrpseeClient::new(wshost).unwrap();
     let chain_info: RuntimeVersion = get_runtime_version(client).await.unwrap();
     println!("----Chain-Info----");
-    println!("Chain Name: {:?}
+    println!(
+        "Chain Name: {:?}
 Runtime version: {:?}
 Authoring Version: {:?}
 State Version: {:?}",
@@ -52,10 +55,16 @@ pub async fn get_all_pallets_storage(wshost: &str) -> Vec<storage_map_info> {
 }
 
 /// subscribe to a chain, wait for runtime upgrade to be triggered, display changes in the storage item types before and after
-pub async fn storage_changes(ws: &str , block_limit: u32) -> anyhow::Result<(), libuptest::error::Error> {//Vec<pallet_storage_diff> {
+pub async fn storage_changes(
+    ws: &str,
+    block_limit: u32,
+) -> anyhow::Result<(), libuptest::error::Error> {
+    //Vec<pallet_storage_diff> {
     let client = JsonrpseeClient::new(ws).expect("Could not connect to ws endpoint");
     println!("Connected to chain");
-    let old_version = get_runtime_version(client.clone()).await.expect("could not get RuntimeVersion from chain");
+    let old_version = get_runtime_version(client.clone())
+        .await
+        .expect("could not get RuntimeVersion from chain");
     let runtime_upgrade_event: event_summary = event_summary {
         pallet_name: "Sudo".to_string(),
         pallet_method: "sudo_unchecked_weight".to_string(),
@@ -65,82 +74,87 @@ pub async fn storage_changes(ws: &str , block_limit: u32) -> anyhow::Result<(), 
         parse_pallet_storage_types(old_metadatablob).await.unwrap();
     println!("Gathered current storage types");
     println!("Waiting for runtime upgrade");
-    let event_grab: H256 =
-        event_watch(client.clone(), runtime_upgrade_event, block_limit).await.expect("could not get runtime upgrade block");
-        println!("Runtime upgrade in block: {:?}", event_grab);
-        println!("Having a coffee break before next block...");
-        let duration_to_wait = Duration::new(10, 0); // chill 10 seconds
-        let _ = sleep(duration_to_wait).await;
-        // diff the predata and the new data
-        println!("Scanning the new metadata for changes");
-        let new_metadatablob = get_raw_metadata(client.clone()).await?;
-        let new_pallet_list: Vec<storage_map_info> =
-            parse_pallet_storage_types(new_metadatablob).await.unwrap();
-        let new_version = get_runtime_version(client.clone()).await.unwrap();
-        println!(
-            "Runtime upgraded from version: {:?} to new version: {:?}",
-            old_version.spec_version, new_version.spec_version
-        );
-    
-        // check which items only the type has been changed, storagemap could have changed type but not name
-        let changed_items: Vec<_> = new_pallet_list
-            .iter()
-            .filter(|new_item| {
-                old_pallet_list
-                    .iter()
-                    .find(|old_item| {
-                        old_item.pallet_name == new_item.pallet_name
+    let event_grab: H256 = event_watch(client.clone(), runtime_upgrade_event, block_limit)
+        .await
+        .expect("could not get runtime upgrade block");
+    println!("Runtime upgrade in block: {:?}", event_grab);
+    println!("Having a coffee break before next block...");
+    let duration_to_wait = Duration::new(10, 0); // chill 10 seconds
+    let _ = sleep(duration_to_wait).await;
+    // diff the predata and the new data
+    println!("Scanning the new metadata for changes");
+    let new_metadatablob = get_raw_metadata(client.clone()).await?;
+    let new_pallet_list: Vec<storage_map_info> =
+        parse_pallet_storage_types(new_metadatablob).await.unwrap();
+    let new_version = get_runtime_version(client.clone()).await.unwrap();
+    println!(
+        "Runtime upgraded from version: {:?} to new version: {:?}",
+        old_version.spec_version, new_version.spec_version
+    );
+
+    // check which items only the type has been changed, storagemap could have changed type but not name
+    let changed_items: Vec<_> = new_pallet_list
+        .iter()
+        .filter(|new_item| {
+            old_pallet_list
+                .iter()
+                .find(|old_item| {
+                    old_item.pallet_name == new_item.pallet_name
                     && old_item.storage_item_name == new_item.storage_item_name
                   //  && old_item.type_id == new_item.type_id
                     && old_item.raw_type != new_item.raw_type
-                    })
-                    .is_some()
-            })
-            .collect();
-        if changed_items.len() == 0 {
-            println!("No storage items has been changed"); 
-        }
-        // Print the changed items
-        for item in &changed_items {
-            //let old_query: storage_map_info =  *item.to_owned();
-            let old: &storage_map_info = old_pallet_list.iter().find(|elem| elem.storage_item_name == item.storage_item_name).expect("Could not detect the previous storage item type");
-            //old = old_pallet_list.get_mut::<storage_map_info>(old_query.into());
-            println!(
-                "Pallet name:  {:?}
+                })
+                .is_some()
+        })
+        .collect();
+    if changed_items.len() == 0 {
+        println!("No storage items has been changed");
+    }
+    // Print the changed items
+    for item in &changed_items {
+        //let old_query: storage_map_info =  *item.to_owned();
+        let old: &storage_map_info = old_pallet_list
+            .iter()
+            .find(|elem| elem.storage_item_name == item.storage_item_name)
+            .expect("Could not detect the previous storage item type");
+        //old = old_pallet_list.get_mut::<storage_map_info>(old_query.into());
+        println!(
+            "Pallet name:  {:?}
     Storage item name:  {:?} 
     Storage item type:  {:?} 
     Old storage type:  {:?}
     New storage type: {:?}
-    ", item.pallet_name, item.storage_item_name, item.storage_type, old.raw_type, item.raw_type
-            );
-        }
-        // lets check the new storage items that has been added to the runtime
-        let added_items: Vec<_> = new_pallet_list
-            .iter()
-            .filter(|new_item| {
-                old_pallet_list
-                    .iter()
-                    .find(|old_item| {
-                        old_item.pallet_name == new_item.pallet_name
-                            && old_item.storage_item_name == new_item.storage_item_name
-                    })
-                    .is_none()
-            })
-            .collect();
-    
-        for sitem in added_items.iter() {
-            println!(
-                "Pallet: {:?} has added a {:?} with the type: {:?}",
-                sitem.pallet_name, sitem.storage_type, sitem.raw_type
-            );
-        }
-    
+    ",
+            item.pallet_name,
+            item.storage_item_name,
+            item.storage_type,
+            old.raw_type,
+            item.raw_type
+        );
+    }
+    // lets check the new storage items that has been added to the runtime
+    let added_items: Vec<_> = new_pallet_list
+        .iter()
+        .filter(|new_item| {
+            old_pallet_list
+                .iter()
+                .find(|old_item| {
+                    old_item.pallet_name == new_item.pallet_name
+                        && old_item.storage_item_name == new_item.storage_item_name
+                })
+                .is_none()
+        })
+        .collect();
+
+    for sitem in added_items.iter() {
+        println!(
+            "Pallet: {:?} has added a {:?} with the type: {:?}",
+            sitem.pallet_name, sitem.storage_type, sitem.raw_type
+        );
+    }
 
     Ok(())
-
-
 }
-
 
 /// return all storagevalues and storagemaps for one single pallets
 pub async fn get_single_pallet_storage(wshost: &str, pallet_name: &str) -> Vec<storage_map_info> {
@@ -264,7 +278,6 @@ ts implementation:
     .signAndSend(sudoac);
 
 */
-
 
 /* moved to seperate repo: https://github.com/uptest-sc/submit-runtime-upgrade
 pub async fn submit_wasm_runtime_upgrade(
