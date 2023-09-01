@@ -30,6 +30,8 @@ pub enum Error {
     ErrorEvent,
     /// Could not find event in the latest blocks
     EventNotFound,
+    /// Could not detect the storage type
+    StoragetypeNotFound,
     /// Could not find the storage item
     StorageItemNotFound,
     /// hex crate error

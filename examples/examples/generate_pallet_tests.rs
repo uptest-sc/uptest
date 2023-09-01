@@ -1,13 +1,32 @@
 use libuptest::error::Error;
 use libuptest::jsonrpseeclient::JsonrpseeClient;
 use libuptest::pallet_storage_parse::{
-    parse_pallet_storage_types, storage_map_info, TypeDef, TypeDefTuple, TypeDefComposite, TypeDefReg,
+    parse_pallet_storage_types, storage_map_info, type_id_to_type_def, tmp_metadata, TypeDef, TypeDefTuple, TypeDefComposite, TypeDefReg,
 };
 use libuptest::test_helper::InputHelper;
 use libuptest::ws_mod::get_raw_metadata;
 use std::any::Any;
+use std::ops::Add;
+use std::os::linux::raw;
 
 async fn current_pallet_functions(pallet_name: String) -> Result<(), Error> {
+    Ok(())
+}
+
+/// convert typeid to raw type, supporting untracked symbols
+async fn track_it(typeid: u32, client: JsonrpseeClient) -> Result<(), Error> {
+    let raw_metadata: Vec<u8> = get_raw_metadata(client).await?;
+    let metadata_scale: &[u8] = &raw_metadata;
+    let metadata: tmp_metadata = tmp_metadata::from_bytes(metadata_scale).expect("valid metadata");
+    let storage_types = metadata.types.clone();
+    println!("Trying to find typeid: {typeid:?}");
+        let og_types = storage_types.types();
+        for g in og_types.iter() {
+            if g.id()  == typeid {
+                println!("Found it!");
+                println!("Type definition: {:?}", g.ty().type_def());
+            }
+        }
     Ok(())
 }
 
@@ -16,9 +35,9 @@ async fn current_pallet_functions(pallet_name: String) -> Result<(), Error> {
 async fn main() -> anyhow::Result<(), Error> {
     let client = JsonrpseeClient::with_default_url()?;
 
-    let metadatablob = get_raw_metadata(client).await?;
+    let metadatablob = get_raw_metadata(client.clone()).await?;
     //get a list of the pallets metadata that we can parse throw
-    let pallet_list: Vec<storage_map_info> = parse_pallet_storage_types(metadatablob).await?;
+    let pallet_list: Vec<storage_map_info> = parse_pallet_storage_types(metadatablob.clone()).await?;
     println!("Connect to chain");
     println!("Scanning storage...");
 
@@ -33,7 +52,7 @@ async fn main() -> anyhow::Result<(), Error> {
             TypeDef::Primitive(value) => {
                 match value {
                     TypeDefReg::U128 => {
-                        println!("Found u128");
+          //              println!("Found u128");
                         let inp = InputHelper::get_u128();
                         let valname = &pallet.storage_item_name;
 
@@ -42,7 +61,7 @@ async fn main() -> anyhow::Result<(), Error> {
                         format!("let testinput: u128 = {}u128", inp)
                     }
                     TypeDefReg::U64 => {
-                        println!("Found u64");
+        //                println!("Found u64");
                         let inp = InputHelper::get_u64();
                         let valname = &pallet.storage_item_name;
 
@@ -52,7 +71,7 @@ async fn main() -> anyhow::Result<(), Error> {
                         format!("let testinput: u64 = {}u64", inp)
                     }
                     TypeDefReg::U32 => {
-                        println!("Found u32");
+      //                  println!("Found u32");
                         let inp = InputHelper::get_u32();
                         let valname = &pallet.storage_item_name;
 
@@ -61,7 +80,7 @@ async fn main() -> anyhow::Result<(), Error> {
                         format!("let testinput: u32 = {}u32", inp)
                     }
                     TypeDefReg::U8 => {
-                        println!("Found u8");
+     //                   println!("Found u8");
                         let inp = InputHelper::get_u8();
                         let valname = &pallet.storage_item_name;
 
@@ -90,12 +109,54 @@ async fn main() -> anyhow::Result<(), Error> {
             },
 
             TypeDef::Tuple(value) => {
-                let outputt = format!("query_storage_map({})", &pallet.storage_item_name);
+                // Add strings to the vector
+                let mut catch_types: Vec<String> = Vec::new();
 
-                println!("tuple detected");
+                for field_row in value.fields().iter() {
+                    let raw_type: u32 = field_row.id();
+                    let type_decode = type_id_to_type_def(metadatablob.clone(), raw_type).await?;
+                    let add_me = format!("{type_decode:?}");
+                    catch_types.push(add_me);
+                };
+                println!("Type definition of tuple output: ");
+                println!("tuple (");
+                for item in catch_types.iter() {
+                    println!("{item:}");
+                }
+                println!(") // end of tuple");
+            //    println!("raw_typeid: {:?}", raw_type);
+            //    println!("raw_type_decode: {:?}", type_decode);
+            //    let oute = track_it(raw_type, client.clone()).await;
+
+                let outputt = format!("let Query_chain_state = {}.{}(); // query the {:?}, output is a tuple of ", &pallet.pallet_name, &pallet.storage_item_name, &pallet.storage_type);
+                // convert typeid to raw type
                 outputt.to_string()
             }
-           
+
+            TypeDef::Variant(value) => {
+                let mut variantz: Vec<String> = Vec::new();
+                for entrypoint in value.variants().iter(){
+                    let name = entrypoint.name();
+                    variantz.push(name.clone());
+                };
+                println!("Output could be any of the following:");
+                for var in variantz {
+                    println!("{:?}", var);
+                }
+                let outputt = format!("let Query_chain_state = {}.{}(); // query the {:?} ", &pallet.pallet_name, &pallet.storage_item_name, &pallet.storage_type);
+
+                outputt
+            }
+
+
+           TypeDef::Sequence(value) =>  {
+            let typeid = value.type_id();
+            println!("Type id is: {:?}", typeid);
+            println!("found sequence!!");
+            "not detected".to_string()
+           }
+            //TypeDef::Seq
+
             _ => "not detected".to_string(),
         };
 
