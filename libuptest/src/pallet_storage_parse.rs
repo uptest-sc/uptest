@@ -9,8 +9,8 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 */
 
-use crate::types::storage_types;
 use crate::error::Error;
+use crate::types::storage_types;
 /// parse the storage values and storage maps associated with all the pallets
 use desub_current::scale_info::TypeDefPrimitive;
 
@@ -24,7 +24,7 @@ pub type TypeDefReg = desub_current::scale_info::TypeDefPrimitive;
 pub type TypeDefComposite = desub_current::scale_info::TypeDefComposite;
 pub type TypeDefTuple = desub_current::scale_info::TypeDefTuple;
 
-// remove me
+// remove me | dummy used for testing
 pub type tmp_metadata = Metadata;
 
 use frame_metadata::v14::StorageEntryType; // v14 only rn..
@@ -89,21 +89,20 @@ fn create_default_type_def() -> desub_current::scale_info::TypeDef<PortableForm>
     TypeDef::Primitive(TypeDefPrimitive::Bool)
 }
 
-
 /// convert u32 type if to the raw type, take the type definition from the metadata
 #[maybe_async::maybe_async(?Send)]
 pub async fn type_id_to_type_def(raw_metadata: Vec<u8>, typeid: u32) -> Result<TypeDef, Error> {
-      let metadata_scale: &[u8] = &raw_metadata;
-        let metadata: Metadata = Metadata::from_bytes(metadata_scale).expect("valid metadata");
-        let storage_types = metadata.types.clone();
-            let og_types = storage_types.types();
-            for g in og_types.iter() {
-                if g.id()  == typeid {
-                    let output = g.ty().type_def();
-                    return Ok(output.clone())
-                }
-            }
-        Err(Error::StoragetypeNotFound)   
+    let metadata_scale: &[u8] = &raw_metadata;
+    let metadata: Metadata = Metadata::from_bytes(metadata_scale).expect("valid metadata");
+    let storage_types = metadata.types.clone();
+    let og_types = storage_types.types();
+    for g in og_types.iter() {
+        if g.id() == typeid {
+            let output = g.ty().type_def();
+            return Ok(output.clone());
+        }
+    }
+    Err(Error::StoragetypeNotFound)
 }
 
 /// parses the storagemaps and storage values from all pallets   
