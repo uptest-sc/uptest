@@ -80,6 +80,15 @@ async fn main() {
             let _out = helper::chain_info(&ws_host).await;
         }
 
+        Some("auto-test") => {
+            let sub_m = matches.subcommand_matches("auto-test").unwrap();
+            let ws_host: String = sub_m
+                .get_one::<String>("ws")
+                .expect("Could not get ws host")
+                .to_owned();
+            let _out = helper::auto_test(&ws_host).await; //chain_info(&ws_host).await;
+        }
+
         Some("pallet-storage") => {
             let sub_m = matches.subcommand_matches("pallet-storage").unwrap();
             let ws_host: String = sub_m

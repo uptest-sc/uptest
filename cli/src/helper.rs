@@ -7,15 +7,15 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+This is a uptest-cli helper module to utilize libuptest
+
 */
 
 use libuptest::decode_extrinsic::{decode_extrinsic_hex_string, decodec_to_event_summary};
 use libuptest::jsonrpseeclient::subscription::HandleSubscription;
 use libuptest::jsonrpseeclient::subscription::Subscribe;
 use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper};
-use libuptest::pallet_storage_parse::{
-    pallet_storage_diff, parse_pallet_storage_types, storage_map_info,
-};
+use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_info};
 use libuptest::types::Header;
 use libuptest::types::{event_summary, RuntimeVersion, H256};
 use libuptest::ws_mod::{
@@ -23,6 +23,16 @@ use libuptest::ws_mod::{
 };
 use tokio::time::sleep;
 use tokio::time::Duration;
+
+use libuptest::error::Error;
+use libuptest::test_generation::autogen::generate_test_std;
+// generate_test_std
+
+pub async fn auto_test(wshost: &str) -> Result<(), Error> {
+    let client = JsonrpseeClient::new(wshost)?;
+    let _out = generate_test_std(client).await?;
+    Ok(())
+}
 
 /// display meta information about chain X
 pub async fn chain_info(wshost: &str) -> bool {

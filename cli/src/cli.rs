@@ -94,6 +94,19 @@ Subscribes to chain with a 150 block limit > wait for sudo runtime upgrade tx > 
             .help_template("Usage example: uptest -c ws://127.0.0.1:9944")
             .arg(arg!(<ws> "ws endpoint of the chain to connect")),
         )
+        // automatically generate tests
+        .subcommand(
+            Command::new("auto-test")
+            .short_flag('a')
+            .long_flag("auto_test_")
+            .about(" Automatically generate code examples for quering the chains storage entries
+           example can be found here:
+
+           ")
+            .help_template("Usage example: uptest -a ws://127.0.0.1:9944")
+            .arg(arg!(<ws> "ws endpoint of the chain to connect")),
+        )
+
         .subcommand(
             Command::new("chain-info")
             .short_flag('i')
