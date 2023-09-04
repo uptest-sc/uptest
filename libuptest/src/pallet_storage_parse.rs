@@ -27,6 +27,9 @@ pub type TypeDefTuple = desub_current::scale_info::TypeDefTuple;
 // remove me | dummy used for testing
 pub type tmp_metadata = Metadata;
 
+/// easy access to rawtype
+pub type RawType = desub_current::scale_info::TypeDef<PortableForm>;
+
 use frame_metadata::v14::StorageEntryType; // v14 only rn..
 
 /// Struct used to help parse pallet storage information in a human readable format

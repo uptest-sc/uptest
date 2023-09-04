@@ -53,7 +53,7 @@ pub struct event_summary {
 }
 
 /// enum for defining what type of storage entry it is, is it a StorageValue, StorageMap or Unknown type
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum storage_types {
     /// Substrate StorageValue
     StorageValue,
