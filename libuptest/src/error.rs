@@ -43,6 +43,10 @@ pub enum Error {
     ConnectionClosed,
     /// connection Handshake failure
     ConnectionHandshakefailed,
+    /// could not get the requested block
+    CouldNotGetBlock,
+    /// Could not get metadata
+    NoMetaData,
     /// could not remove connection subscription
     Unsubscribefail,
     /// Could not get next item in async loop
