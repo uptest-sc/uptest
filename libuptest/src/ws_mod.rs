@@ -19,6 +19,8 @@ use crate::types::{PreBlock, H256};
 use crate::{metadata, rpc_params};
 use std::str::FromStr;
 
+use crate::error::Error;
+
 use crate::error::Error as standard_error;
 
 #[cfg(feature = "metadatadecode")]
@@ -49,7 +51,7 @@ pub async fn get_remote_metadata_version(url: &str) -> anyhow::Result<u8> {
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_metadata_version(
     client: JsonrpseeClient,
-) -> anyhow::Result<u8, crate::error::Error> {
+) -> anyhow::Result<u8, Error> {
     let hex_data: String = client
         .request("state_getMetadata", RpcParams::new())
         .await?;
@@ -115,7 +117,7 @@ pub async fn get_latest_finalized_head(client: JsonrpseeClient) -> anyhow::Resul
 #[maybe_async::maybe_async(?Send)]
 pub async fn get_latest_finalized_head(
     client: JsonrpseeClient,
-) -> anyhow::Result<H256, standard_error> {
+) -> anyhow::Result<H256, Error> {
     let hex_data: String = client
         .request("chain_getFinalizedHead", RpcParams::new())
         .await?;
@@ -156,14 +158,14 @@ pub async fn get_block_events_lower_case(
 pub async fn get_block_events(
     blockhash: H256,
     client: JsonrpseeClient,
-) -> anyhow::Result<PreBlock, crate::error::Error> {
+) -> anyhow::Result<PreBlock, Error> {
     let string_hash: String = format!("{:?}", blockhash);
     //   let query: Vec<String> = client.request("chain_getBlock",  rpc_params!["0x11dc73c97be314034507df6ceb80a3f4e15aa0d04f2a7f148e076e68e5341f96"]).await?; //rpc_params![].into()
 
     let qq: PreBlock = client
         .request("chain_getBlock", rpc_params![string_hash])
-        .await?; //rpc_params![].into()
-                 //let fluff: Vec<String> = vec!["fluff".to_string()];
+        .await.map_err(|err| Error::CouldNotGetBlock)?; 
+    
     Ok(qq)
 }
 
@@ -222,7 +224,7 @@ pub async fn event_watch_non_case_sensitive(
             RpcParams::new(),
             "chain_unsubscribeFinalizedHeads",
         )
-        .unwrap();
+        .map_err(|err| Error::ConnectionSubscriptionProblem)?;
     let metadatablob: Vec<u8> = get_raw_metadata(client.clone()).await?;
 
     for _ in 0..block_limit {
@@ -264,7 +266,7 @@ pub async fn event_watch(
     event: event_summary,
     block_limit: u32,
 ) -> anyhow::Result<H256, crate::error::Error> {
-    let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
+    let metadatablob = get_raw_metadata(client.clone()).await.map_err(|error| Error::NoMetaData)?;
     //  let blockhash: H256 =
     //      H256::from_str("0x89a5dde6705d345117f442dfacf02f4a59bf5cea3ab713a5c07fc4cd78be3a31")
     //          .unwrap();
@@ -275,7 +277,7 @@ pub async fn event_watch(
             RpcParams::new(),
             "chain_unsubscribeFinalizedHeads",
         )
-        .unwrap();
+        .map_err(|error|Error::ConnectionSubscriptionProblem)?;
 
     for _ in 0..block_limit {
         //        println!("event watch start");
@@ -283,7 +285,7 @@ pub async fn event_watch(
         let nextone = subscrib.next();
         let block_nr = nextone.unwrap().unwrap().number;
         let tmp_blockhash = blocknumber_to_blockhash(tmp_client.clone(), block_nr).await?;
-        let preblock = get_block_events(tmp_blockhash, tmp_client).await.unwrap();
+        let preblock = get_block_events(tmp_blockhash, tmp_client).await.map_err(|error| Error::CouldNotGetBlock)?;
 
         let extrinsics = preblock.block.extrinsics;
 
