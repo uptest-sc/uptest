@@ -2,6 +2,7 @@ use reqwest::header::USER_AGENT;
 use serde::{Deserialize, Serialize};
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt; // for write_all()
+use crate::error::Error;
 
 /// crates.io crates.crate.links field
 #[derive(Deserialize, Serialize, Debug)]
@@ -62,7 +63,7 @@ pub struct Crates {
 pub async fn download_crate_from_crates_io(
     crate_version: String,
     crate_name: String,
-) -> Result<String, reqwest::Error> {
+) -> Result<String, Error> {
     let file_name = format!("{crate_name:}-{crate_version:}.gzip");
     //https://crates.io/api/v1/crates/serde/1.0.0/download
     let url = format!(
@@ -77,11 +78,11 @@ pub async fn download_crate_from_crates_io(
         .send()
         .await?;
     println!("crate downloaded ok");
-    let mut filen = File::create(file_name.clone()).await.unwrap();
+    let mut filen = File::create(file_name.clone()).await?;
     filen
         .write_all(&tanka.bytes().await.unwrap())
         .await
-        .unwrap();
+        ?;
     println!("crate saved as {file_name:}");
 
     Ok(file_name)

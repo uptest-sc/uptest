@@ -16,11 +16,11 @@ use libuptest::types::H256;
 use libuptest::ws_mod::{get_latest_finalized_head, get_metadata_version};
 //use libuptest::jsonrpseeclient::subscription::Request;
 //use libuptest::jsonrpseeclient::RpcParams;
-
+use libuptest::error::Error;
 //use jsonrpsee::ws_client::{WsClientBuilder, WsClient};
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() -> anyhow::Result<(), Error> {
     /*
     println!("Connecting to polkadot");
     let dial_polkadot = JsonrpseeClient::polkadot_default_url();
@@ -31,13 +31,13 @@ async fn main() -> anyhow::Result<()> {
     */
 
     println!("Connecting to Edgeware");
-    let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url().unwrap();
-    let edg_version: u8 = get_metadata_version(dial_edg.clone()).await.unwrap(); // yolo unwrap
+    let dial_edg: JsonrpseeClient = JsonrpseeClient::edgeware_default_url()?;
+    let edg_version: u8 = get_metadata_version(dial_edg.clone()).await?;
     println!(
         "Connected to chain: {:?} and got metadata version: {:?}",
         "Edgeware", edg_version
     );
-    let finalized_block_hash: H256 = get_latest_finalized_head(dial_edg).await.unwrap();
+    let finalized_block_hash: H256 = get_latest_finalized_head(dial_edg).await?;
     //   let str_it = format!("{:?}", finalized_block_hash);
     println!("The latest finalized head is: {:?}", finalized_block_hash);
 

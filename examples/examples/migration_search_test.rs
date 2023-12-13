@@ -1,11 +1,11 @@
 //use std::fmt::format;
 use libuptest::migration_search::crates_io_search::{
-    download_crate_from_crates_io, search_crates_io, Crate, Crates,
+    download_crate_from_crates_io, search_crates_io, Crates,
 };
 use libuptest::migration_search::decompress::tar_xvf;
 use libuptest::migration_search::file_search::test_glob;
 
-pub struct mig_find {}
+pub struct MigFind {}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("docs are at: {:?}", results.documentation);
         // download crate to parent working dir
         let filen =
-            download_crate_from_crates_io(results.version.clone(), results.name.clone()).await?;
+            download_crate_from_crates_io(results.version.clone(), results.name.clone()).await.unwrap();
         println!("unziping file");
         let _unzip = tar_xvf(filen.clone());
         println!("file downloaded");

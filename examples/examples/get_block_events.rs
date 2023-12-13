@@ -16,14 +16,16 @@ use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper
 use libuptest::types::Header;
 use libuptest::types::{event_summary, H256};
 use libuptest::ws_mod::{blocknumber_to_blockhash, get_block_events, get_raw_metadata};
+use libuptest::error::Error;
+
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() -> anyhow::Result<(), Error> {
     println!(
         "Getting the latest pallet functions that where executed in the latest finalized block"
     );
-    let client = JsonrpseeClient::polkadot_default_url().unwrap(); // change me
-    let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
+    let client = JsonrpseeClient::polkadot_default_url()?; // change me
+    let metadatablob = get_raw_metadata(client.clone()).await?;
     println!("Subscribing to latest finalized blocks");
     let mut subscrib: SubscriptionWrapper<Header> = client
         .clone()
@@ -32,22 +34,30 @@ async fn main() -> anyhow::Result<()> {
             RpcParams::new(),
             "chain_unsubscribeFinalizedHeads",
         )
-        .unwrap();
+        ?;
 
     for _ in 0..3 {
-        let tmp_client = JsonrpseeClient::polkadot_default_url().unwrap();
+        let tmp_client = JsonrpseeClient::polkadot_default_url()?;
         let nextone = subscrib.next();
-        let blocknr = nextone.unwrap().unwrap().number;
+        let blocknr = match nextone {
+            Some(Ok(header)) => header.clone().number,
+            Some(Err(_err)) => {
+                return Err(Error::BlockparseError);
+            }
+            None => {
+                return Err(Error::BlockparseError);
+            }
+        };
         println!("Latest finalized block: {:?}", blocknr);
         let blockhash: H256 = blocknumber_to_blockhash(tmp_client.clone(), blocknr.clone())
             .await
-            .unwrap();
+            ?;
         println!("Got block hash: {blockhash:?}");
 
         //    let tmpblock: H256 = H256::from_str("0x17ee6d42553cf5161144ab95fecfe27c694e697f2d7e6f22271972cf476176b5").unwrap(); static polkadot block used for debugging
 
         //let tmpblock: H256 = H256::from_string("0x343f3f94ff17c79f2f4e77dcb5e894507b89dd575dbc2e36bde658ad653ead45"); //0x343f3f94ff17c79f2f4e77dcb5e894507b89dd575dbc2e36bde658ad653ead45
-        let preblock = get_block_events(blockhash, tmp_client).await.unwrap();
+        let preblock = get_block_events(blockhash, tmp_client).await?;
 
         let extrinsics = preblock.block.extrinsics;
 

@@ -5,8 +5,7 @@ use crate::test_helper::InputHelper;
 use crate::ws_mod::get_raw_metadata;
 
 use crate::pallet_storage_parse::{
-    parse_pallet_storage_types, storage_map_info, type_id_to_type_def, TypeDef, TypeDefComposite,
-    TypeDefReg, TypeDefTuple,
+    parse_pallet_storage_types, storage_map_info, type_id_to_type_def, TypeDef, TypeDefReg,
 };
 use crate::types::storage_types;
 
@@ -105,7 +104,7 @@ pub async fn generate_auto_test(client: JsonrpseeClient) -> Result<AutoTests, Er
                 let name_type = test
                     .fields()
                     .first()
-                    .unwrap()
+                    .unwrap() // needs looking over upstream
                     .type_name()
                     .ok_or(Error::StorageItemNotFound)?; // only does first, todo: fix this to an iterating solution
                 let outputt = format!(
@@ -246,7 +245,7 @@ pub async fn generate_test_std(client: JsonrpseeClient) -> Result<(), Error> {
                 let name_type = test
                     .fields()
                     .first()
-                    .unwrap()
+                    .unwrap() // needs looking over upstream
                     .type_name()
                     .ok_or(Error::StorageItemNotFound)?; // only does first, todo: fix this to an iterating solution
                 let outputt = format!(
@@ -314,6 +313,6 @@ pub async fn generate_test_std(client: JsonrpseeClient) -> Result<(), Error> {
         println!("-------------------");
     }
 
-    /// raw type to match against the input gen
+    // raw type to match against the input gen
     Ok(())
 }

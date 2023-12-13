@@ -7,9 +7,11 @@ Substrate r*U*ntime u*P*grade *TEST*ing library
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)   
 
 
-Funded by:  
+Initally funded by:  
 ![Polkadot Treasury](polkadot-treasury-logo.svg)
 
+### Latest release:
+0.1.4   
 
 ### Documentation:    
 [https://uptest-sc.github.io/](https://uptest-sc.github.io/)   

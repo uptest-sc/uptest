@@ -14,13 +14,13 @@ use libuptest::jsonrpseeclient::JsonrpseeClient;
 use libuptest::types::{event_summary, H256};
 use libuptest::ws_mod::{event_watch, get_raw_metadata, get_runtime_version};
 use tokio::time::{sleep, Duration};
-
+use libuptest::error::Error;
 use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_info};
 
 #[tokio::main]
-async fn main() -> anyhow::Result<(), libuptest::error::Error> {
-    let client = JsonrpseeClient::with_default_url().unwrap(); //.expect("Could not connect to chain");
-    let old_version = get_runtime_version(client.clone()).await.unwrap();
+async fn main() -> anyhow::Result<(), Error> {
+    let client = JsonrpseeClient::with_default_url()?; //.expect("Could not connect to chain");
+    let old_version = get_runtime_version(client.clone()).await?;
     println!(
         "Connected to: {:?}  Runtime version: {:?}",
         old_version.spec_name, old_version.spec_version
@@ -33,10 +33,10 @@ async fn main() -> anyhow::Result<(), libuptest::error::Error> {
     println!("Waiting for custom event to be triggered");
     let old_metadatablob = get_raw_metadata(client.clone()).await?;
     let old_pallet_list: Vec<storage_map_info> =
-        parse_pallet_storage_types(old_metadatablob).await.unwrap();
+        parse_pallet_storage_types(old_metadatablob).await?;
     let event_grab: Result<H256, libuptest::error::Error> =
         event_watch(client.clone(), runtime_upgrade_event, block_limit).await;
-    println!("Event detected in block: {:?}", event_grab.unwrap());
+    println!("Event detected in block: {:?}", event_grab?);
     println!("Having a coffee break before next block...");
     let duration_to_wait = Duration::new(10, 0); // chill 10 seconds
     let _ = sleep(duration_to_wait).await;
@@ -44,8 +44,8 @@ async fn main() -> anyhow::Result<(), libuptest::error::Error> {
     println!("Scanning the new metadata for changes");
     let new_metadatablob = get_raw_metadata(client.clone()).await?;
     let new_pallet_list: Vec<storage_map_info> =
-        parse_pallet_storage_types(new_metadatablob).await.unwrap();
-    let new_version = get_runtime_version(client.clone()).await.unwrap();
+        parse_pallet_storage_types(new_metadatablob).await?;
+    let new_version = get_runtime_version(client.clone()).await?;
     println!(
         "Runtime upgraded from version: {:?} to new version: {:?}",
         old_version.spec_version, new_version.spec_version

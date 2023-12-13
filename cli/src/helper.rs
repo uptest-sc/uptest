@@ -35,9 +35,9 @@ pub async fn auto_test(wshost: &str) -> Result<(), Error> {
 }
 
 /// display meta information about chain X
-pub async fn chain_info(wshost: &str) -> bool {
-    let client = JsonrpseeClient::new(wshost).unwrap();
-    let chain_info: RuntimeVersion = get_runtime_version(client).await.unwrap();
+pub async fn chain_info(wshost: &str) -> Result<bool, Error> {
+    let client = JsonrpseeClient::new(wshost)?;
+    let chain_info: RuntimeVersion = get_runtime_version(client).await?;
     println!("----Chain-Info----");
     println!(
         "Chain Name: {:?}
@@ -50,18 +50,17 @@ State Version: {:?}",
         chain_info.state_version
     );
     println!("--E-O-L--");
-    true
+    Ok(true)
 }
 
 /// return all storagevalues and storagemaps for all pallets
-pub async fn get_all_pallets_storage(wshost: &str) -> Vec<storage_map_info> {
-    let client = JsonrpseeClient::new(wshost).unwrap();
+pub async fn get_all_pallets_storage(wshost: &str) -> Result<Vec<storage_map_info>, Error> {
+    let client = JsonrpseeClient::new(wshost)?;
     // get the chain's metadata
-    let metadatablob = get_raw_metadata(client).await.unwrap();
+    let metadatablob = get_raw_metadata(client).await?;
 
-    let pallet_list: Vec<storage_map_info> =
-        parse_pallet_storage_types(metadatablob).await.unwrap();
-    pallet_list
+    let pallet_list: Vec<storage_map_info> = parse_pallet_storage_types(metadatablob).await?;
+    Ok(pallet_list)
 }
 
 /// subscribe to a chain, wait for runtime upgrade to be triggered, display changes in the storage item types before and after
@@ -81,7 +80,7 @@ pub async fn storage_changes(
     };
     let old_metadatablob = get_raw_metadata(client.clone()).await?;
     let old_pallet_list: Vec<storage_map_info> =
-        parse_pallet_storage_types(old_metadatablob).await.unwrap();
+        parse_pallet_storage_types(old_metadatablob).await?;
     println!("Gathered current storage types");
     println!("Waiting for runtime upgrade");
     let event_grab: H256 = event_watch(client.clone(), runtime_upgrade_event, block_limit)
@@ -95,8 +94,8 @@ pub async fn storage_changes(
     println!("Scanning the new metadata for changes");
     let new_metadatablob = get_raw_metadata(client.clone()).await?;
     let new_pallet_list: Vec<storage_map_info> =
-        parse_pallet_storage_types(new_metadatablob).await.unwrap();
-    let new_version = get_runtime_version(client.clone()).await.unwrap();
+        parse_pallet_storage_types(new_metadatablob).await?;
+    let new_version = get_runtime_version(client.clone()).await?;
     println!(
         "Runtime upgraded from version: {:?} to new version: {:?}",
         old_version.spec_version, new_version.spec_version
@@ -167,18 +166,24 @@ pub async fn storage_changes(
 }
 
 /// return all storagevalues and storagemaps for one single pallets
-pub async fn get_single_pallet_storage(wshost: &str, pallet_name: &str) -> Vec<storage_map_info> {
-    let pallet_list: Vec<storage_map_info> = get_all_pallets_storage(wshost).await;
+pub async fn get_single_pallet_storage(
+    wshost: &str,
+    pallet_name: &str,
+) -> Result<Vec<storage_map_info>, Error> {
+    let pallet_list: Vec<storage_map_info> = get_all_pallets_storage(wshost).await?;
     let new_list: Vec<storage_map_info> = pallet_list
         .into_iter()
         .filter(|pallet_entry: &storage_map_info| pallet_entry.pallet_name == pallet_name)
         .collect(); // filter list based on pallet name
-    new_list
+    Ok(new_list)
 }
 
 /// display what pallet and functions where triggers in the X amount of latest finalized blocks
-pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) -> bool {
-    let client = JsonrpseeClient::new(wshost).unwrap(); // change me
+pub async fn event_summary_for_latest_blocks(
+    wshost: &str,
+    block_amount: u32,
+) -> anyhow::Result<bool, Error> {
+    let client = JsonrpseeClient::new(wshost)?; // change me
     let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
     println!("Subscribing to latest finalized blocks at {wshost:?}");
     let mut subscrib: SubscriptionWrapper<Header> = client
@@ -188,20 +193,28 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
             RpcParams::new(),
             "chain_unsubscribeFinalizedHeads",
         )
-        .unwrap();
+        .map_err(|_err| Error::ConnectionSubscriptionProblem)?;
 
     for _ in 0..block_amount {
-        let tmp_client = JsonrpseeClient::new(wshost).unwrap();
+        let tmp_client = JsonrpseeClient::new(wshost)?;
         let nextone = subscrib.next();
-        let blocknr = nextone.unwrap().unwrap().number;
+        let blocknr = match nextone {
+            Some(Ok(header)) => header.clone().number,
+            Some(Err(_err)) => {
+                return Err(Error::BlockparseError);
+            }
+            None => {
+                return Err(Error::BlockparseError);
+            }
+        };
         println!("------------------------------------------------");
         println!("Latest finalized block number: #{}", blocknr);
         let blockhash: H256 = blocknumber_to_blockhash(tmp_client.clone(), blocknr.clone())
             .await
-            .unwrap();
+            .map_err(|_err| Error::CouldNotGetBlock)?;
         println!("Finalized block hash: {blockhash:?}");
 
-        let preblock = get_block_events(blockhash, tmp_client).await.unwrap();
+        let preblock = get_block_events(blockhash, tmp_client).await?;
 
         let extrinsics = preblock.block.extrinsics;
 
@@ -223,11 +236,15 @@ pub async fn event_summary_for_latest_blocks(wshost: &str, block_amount: u32) ->
     }
 
     let _ = subscrib.unsubscribe();
-    true //Ok(true)
+    Ok(true)
 }
 
 /// Subscribe and break on user defined event
-pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &str) -> bool {
+pub async fn watch_for_event(
+    wshost: &str,
+    pallet_name: &str,
+    pallet_method: &str,
+) -> Result<bool, Error> {
     println!("Subscribing to Chain X, Metadata Version Y");
     println!("Connecting to chain..");
     let client = JsonrpseeClient::new(wshost).unwrap();
@@ -242,18 +259,28 @@ pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &st
             RpcParams::new(),
             "chain_unsubscribeFinalizedHeads",
         )
-        .unwrap();
-    let metadatablob = get_raw_metadata(client.clone()).await.unwrap();
+        .map_err(|_err| Error::ConnectionSubscriptionProblem)?;
+    let metadatablob = get_raw_metadata(client.clone())
+        .await
+        .map_err(|_err| Error::NoMetaData)?;
 
     for _ in 0..100 {
         let nextone = subscrib.next();
-        let blocknr = nextone.unwrap().unwrap().number;
-        let blockhash: H256 = blocknumber_to_blockhash(client.clone(), blocknr.clone())
-            .await
-            .unwrap(); // can we change this syntax so we are not looping clone's?
+
+        let blocknr = match nextone {
+            Some(Ok(header)) => header.clone().number,
+            Some(Err(_err)) => {
+                return Err(Error::BlockparseError);
+            }
+            None => {
+                // Handle the case when nextone is None (no value)
+                return Err(Error::BlockparseError);
+            }
+        };
+        let blockhash: H256 = blocknumber_to_blockhash(client.clone(), blocknr.clone()).await?; // can we change this syntax so we are not looping clone's?
 
         println!("Checking block #{}", blocknr);
-        let preblock = get_block_events(blockhash, client.clone()).await.unwrap();
+        let preblock = get_block_events(blockhash, client.clone()).await?;
         let extrinsics = preblock.block.extrinsics;
         println!("Got block events... Decoding it..");
         let decodedevent_list: Vec<event_summary> = extrinsics
@@ -276,7 +303,7 @@ pub async fn watch_for_event(wshost: &str, pallet_name: &str, pallet_method: &st
     }
 
     let _ = subscrib.unsubscribe();
-    true
+    Ok(true)
 }
 
 /*

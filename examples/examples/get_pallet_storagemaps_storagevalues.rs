@@ -13,17 +13,19 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 use libuptest::jsonrpseeclient::JsonrpseeClient;
 use libuptest::pallet_storage_parse::{parse_pallet_storage_types, storage_map_info};
 use libuptest::ws_mod::get_raw_metadata;
+use libuptest::error::Error;
+
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Error> {
     println!("Starting");
-    let client = JsonrpseeClient::with_default_url().unwrap();
+    let client = JsonrpseeClient::with_default_url()?;
 
     // get the chain's metadata
-    let metadatablob = get_raw_metadata(client).await.unwrap();
+    let metadatablob = get_raw_metadata(client).await?;
 
     let pallet_list: Vec<storage_map_info> =
-        parse_pallet_storage_types(metadatablob).await.unwrap();
+        parse_pallet_storage_types(metadatablob).await?;
     println!("Amount of pallets:  {:?}", pallet_list.len());
     println!("looping throw loot");
     // /*
@@ -35,5 +37,5 @@ async fn main() {
 
     //  */
     println!("done");
-    //Ok(())
+    Ok(())
 }
