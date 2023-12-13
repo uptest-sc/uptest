@@ -6,13 +6,6 @@ use libuptest::pallet_storage_parse::{
 };
 use libuptest::test_helper::InputHelper;
 use libuptest::ws_mod::get_raw_metadata;
-use std::any::Any;
-use std::ops::Add;
-use std::os::linux::raw;
-
-async fn current_pallet_functions(pallet_name: String) -> Result<(), Error> {
-    Ok(())
-}
 
 /// convert typeid to raw type, supporting untracked symbols
 async fn track_it(typeid: u32, client: JsonrpseeClient) -> Result<(), Error> {
@@ -109,7 +102,7 @@ async fn main() -> anyhow::Result<(), Error> {
                 let name_type = test
                     .fields()
                     .first()
-                    .unwrap()
+                    .unwrap() // need fixing upstream
                     .type_name()
                     .ok_or(Error::StorageItemNotFound)?; // only does first, todo: fix this to an iterating solution
                 let outputt = format!(

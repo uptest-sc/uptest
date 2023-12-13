@@ -4,6 +4,7 @@ use libuptest::subxt_helper::tx_schedule;
 use libuptest::types::event_summary;
 use subxt::{OnlineClient, PolkadotConfig};
 use subxt_signer::sr25519::dev;
+use libuptest::error::Error;
 
 #[subxt::subxt(runtime_metadata_url = "ws://127.0.0.1:9944")]
 pub mod nodetemplate {}
@@ -11,7 +12,7 @@ pub mod nodetemplate {}
 use nodetemplate::runtime_types::sp_weights::weight_v2::Weight;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<(), libuptest::error::Error> {
+async fn main() -> anyhow::Result<(), Error> {
     println!("starting");
     // wait for 100 blocks
     let block_limit: u32 = 100u32;
@@ -30,7 +31,7 @@ async fn main() -> anyhow::Result<(), libuptest::error::Error> {
     // build the subxt api
     let api = OnlineClient::<PolkadotConfig>::from_url(ws_host)
         .await
-        .unwrap();
+        ?;
     // run function
     let go = tx_schedule(from_account, api, &call, event, block_limit, ws_host).await;
     println!(

@@ -36,7 +36,7 @@ impl From<subxt::utils::H256> for H256 {
 }
 
 /// Block Header containing the block nr
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Header {
     pub number: String,
 }

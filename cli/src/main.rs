@@ -11,12 +11,13 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 // Uptest --chain X --wshost ws://host:port --pallet-test scheduler --sudo "seed goes here"
 
 use clap::ArgMatches;
+use libuptest::error::Error;
 use libuptest::pallet_storage_parse::storage_map_info;
 mod cli;
 mod helper;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Error> {
     println!("Uptest command line tool");
     let matches: ArgMatches = cli::gen_cli().get_matches();
     //  println!("Matches: {:?}", matches.subcommand_name());
@@ -28,9 +29,9 @@ async fn main() {
             let pallet_name = sub_m.get_one::<String>("pallet_name").map(|s| s.as_str());
             //      println!("Pallet name: {pallet_name:?} Pallet method: {pallet_method:?}");
             //      println!("pallet method sub ok");
-            helper::watch_for_event(
+            let _ = helper::watch_for_event(
                 "ws://127.0.0.1:9944",
-                pallet_name.unwrap(),
+                pallet_name.unwrap(), // this is a clap unwrap problem...
                 pallet_method.unwrap(),
             )
             .await;
@@ -52,18 +53,10 @@ async fn main() {
                 .expect("Could not get ws host")
                 .to_owned();
 
-            // some input validation
-            match &ws_host[0..5] == "ws://" {
-                true => {}
-                false => {
-                    panic!("ws host does not start with ws://, double check ws address");
-                }
-            }
-
             //            let wshost: &str = sub_m.get_one::<&str>("ws_host").map(|s| s).unwrap();
             println!("Gathering information about all pallet's storage information");
             let listan: Vec<storage_map_info> =
-                helper::get_all_pallets_storage(ws_host.as_str()).await;
+                helper::get_all_pallets_storage(ws_host.as_str()).await?;
             for mypallet in listan.iter() {
                 println!("Pallet name: {:?}\r\n - Storage item name: {:?}\r\n - Storage type: {:?}\r\n - Storage type id key: {:?}\r\n - Pallet Raw type: {:?}", 
                 &mypallet.pallet_name, &mypallet.storage_item_name, &mypallet.storage_type, &mypallet.type_id, &mypallet.raw_type
@@ -77,7 +70,7 @@ async fn main() {
                 .get_one::<String>("ws")
                 .expect("Could not get ws host")
                 .to_owned();
-            let _out = helper::chain_info(&ws_host).await;
+            let _out = helper::chain_info(&ws_host).await?;
         }
 
         Some("auto-test") => {
@@ -99,7 +92,7 @@ async fn main() {
 
             println!("Gathering information about pallet: {pallet_name:?}");
             let listan: Vec<storage_map_info> =
-                helper::get_single_pallet_storage(&ws_host, &pallet_name).await;
+                helper::get_single_pallet_storage(&ws_host, &pallet_name).await?;
             match listan.len() {
                 0 => {
                     println!("Could not find any pallet by that name, check spelling");
@@ -169,4 +162,5 @@ async fn main() {
 
 
     */
+    Ok(())
 }

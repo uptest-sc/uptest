@@ -50,6 +50,11 @@ https://github.com/users/uptest-sc/projects/1/views/1
 
 ### Examples   
 
+Run examples:  
+```shell
+$ sh run_example.sh
+```
+
 #### Get metadata version:   
 ```rust
 use libuptest::jsonrpseeclient::JsonrpseeClient;

@@ -44,10 +44,10 @@ pub async fn tx_schedule<Call: subxt::tx::TxPayload>(
         .tx()
         .sign_and_submit_then_watch_default(call, &from_account)
         .await
-        .unwrap()
+        .unwrap() // needs looking over upstreeam lib
         .wait_for_finalized_success()
         .await
-        .unwrap();
+        .unwrap(); // needs looking over upstreeam lib
     //    println!("tx sent");
     let blockhash: H256 = events.block_hash().into();
     // return the block hash that includes the executed transaction

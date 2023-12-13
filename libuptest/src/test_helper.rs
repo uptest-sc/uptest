@@ -1,5 +1,5 @@
 /// automatically generate
-use rand::{Rng, SeedableRng}; // https://rust-random.github.io/book/guide-rngs.html
+use rand::Rng; // https://rust-random.github.io/book/guide-rngs.html
 
 #[cfg(feature = "subxthelper")]
 use subxt_signer::sr25519::Keypair;

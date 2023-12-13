@@ -14,10 +14,11 @@ use libuptest::jsonrpseeclient::subscription::HandleSubscription;
 use libuptest::jsonrpseeclient::subscription::Subscribe;
 use libuptest::jsonrpseeclient::{JsonrpseeClient, RpcParams, SubscriptionWrapper};
 use libuptest::types::Header;
+use libuptest::error::Error;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    let client = JsonrpseeClient::edgeware_default_url().unwrap();
+async fn main() -> anyhow::Result<(), Error> {
+    let client = JsonrpseeClient::edgeware_default_url()?;
 
     // todo: macro this
     println!("Subscribing");
@@ -27,13 +28,22 @@ async fn main() -> anyhow::Result<()> {
             RpcParams::new(),
             "chain_unsubscribeFinalizedHeads",
         )
-        .unwrap();
+        ?;
 
     for _ in 0..3 {
         let nextone = subscrib.next();
+        let myblocknr = match nextone {
+            Some(Ok(header)) => header.clone().number,
+            Some(Err(_err)) => {
+                return Err(Error::BlockparseError);
+            }
+            None => {
+                return Err(Error::BlockparseError);
+            }
+        };
         println!(
             "Latest finalized block: {:?}",
-            nextone.unwrap().unwrap().number
+            myblocknr
         );
     }
 

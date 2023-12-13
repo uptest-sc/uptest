@@ -11,12 +11,13 @@ State Version: 1
 */
 use libuptest::types::RuntimeVersion;
 use libuptest::ws_mod::get_runtime_version;
+use libuptest::error::Error;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() -> anyhow::Result<(), Error> {
     // chain at 127.0.0.1:9944
-    let client = JsonrpseeClient::with_default_url().unwrap();
-    let chain_info: RuntimeVersion = get_runtime_version(client).await.unwrap();
+    let client = JsonrpseeClient::with_default_url()?;
+    let chain_info: RuntimeVersion = get_runtime_version(client).await?;
     println!("----Chain-Info----");
     println!(
         "Chain Name: {:?}

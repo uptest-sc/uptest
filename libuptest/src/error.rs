@@ -20,12 +20,18 @@ use serde::{Deserialize, Serialize}; //boxed::Box,
 pub enum Error {
     /// Serde Json error
     SerdeJson(serde_json::error::Error),
+    /// subxt thirdparty library error
+    SubxtError(subxt::Error),
+    // reqwest thirdparty lib error
+    ReqwestError(reqwest::Error),
     MpscSend(String),
     InvalidUrl(String),
     RecvError(String),
     Io(String),
     FileIOerror(std::io::Error),
     Stderror(String),
+    // error in std::error
+    STDLIBerror,
     /// error getting block events
     ErrorEvent,
     /// Could not find event in the latest blocks
@@ -49,6 +55,8 @@ pub enum Error {
     NoMetaData,
     /// could not remove connection subscription
     Unsubscribefail,
+    /// could not parse the block
+    BlockparseError,
     /// Could not get next item in async loop
     AsyncNextError,
     /// Could not establish a subscription connection
@@ -56,6 +64,8 @@ pub enum Error {
     Client(Box<dyn core::error::Error + Send + Sync + 'static>),
     Anyhow(anyhow::Error),
 }
+
+
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -69,6 +79,13 @@ impl From<serde_json::error::Error> for Error {
         Self::SerdeJson(error)
     }
 }
+// subxt 
+impl From<subxt::Error> for Error {
+    fn from(error: subxt::Error) -> Self {
+        Self::SubxtError(error)
+    }
+}
+
 // add hex | solve the trait `From<hex::FromHexError>` is not implemented for `error::Error`
 impl From<hex::FromHexError> for Error {
     fn from(value: hex::FromHexError) -> Self {
@@ -85,6 +102,20 @@ impl From<anyhow::Error> for Error {
 impl From<std::io::Error> for Error {
     fn from(value: std::io::Error) -> Self {
         Self::FileIOerror(value)
+    }
+}
+
+impl From<Box<dyn std::error::Error>> for Error {
+    fn from(error: Box<dyn std::error::Error>) -> Self {
+        Self::Stderror(error.to_string())
+       }
+}
+
+
+
+impl From<reqwest::Error> for Error {
+    fn from(value: reqwest::Error) -> Self {
+        Self::ReqwestError(value)
     }
 }
 
