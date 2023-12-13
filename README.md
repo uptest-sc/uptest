@@ -3,7 +3,7 @@
 Substrate r*U*ntime u*P*grade *TEST*ing library
 
 [![Crates.io LibUptest](https://img.shields.io/crates/v/libuptest.svg)](https://crates.io/crates/libuptest)
-[![Docs.rs Libuptest](https://img.shields.io/docsrs/libuptest/0.1.2)](https://docs.rs/libuptest)
+[![Docs.rs Libuptest](https://img.shields.io/docsrs/libuptest/0.1.4)](https://docs.rs/libuptest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)   
 
 Funded by:  
