@@ -1,13 +1,13 @@
 [package]
 name = "uptest-examples"
 authors = ["Rust Syndicate"]
-version = "0.1.3"
+version = "0.1.4
 description = "Examples for libuptest"
 license = "MIT"
 edition = "2021"
 
 [dependencies]
-libuptest = { path = "../libuptest", version = "0.1.3", features = ["metadatadecode", "migrationsearch", "subxthelper", "auto-test"] } #  
+libuptest = { path = "../libuptest", version = "0.1.4", features = ["metadatadecode", "migrationsearch", "subxthelper", "auto-test"] } #  
 anyhow =  "1.0.70"
 tokio = { version = "1.27", features = ["full"] }
 jsonrpsee = { version = "0.16.2",  features = ["server", "ws-client", "macros", "client-ws-transport"]}

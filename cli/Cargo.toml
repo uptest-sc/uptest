@@ -10,7 +10,7 @@ readme = "README.md"
 
 [dependencies]
 clap = { version = "4.1.4", features=["derive"]}
-libuptest = { path = "../libuptest/", version = "0.1.2", features = ["metadatadecode", "auto-test"]}
+libuptest = { path = "../libuptest/", version = "0.1.4", features = ["metadatadecode", "auto-test"]}
 tokio = { version = "1.27", features = ["full"] }
 hex = { version = "0.4.3", features = ["alloc"]}
 anyhow = "1.0.69"
